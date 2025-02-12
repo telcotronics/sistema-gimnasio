@@ -1,4 +1,4 @@
-const RUTA_GLOBAL = "http://localhost/sistema-gimnasio/api/"
+const RUTA_GLOBAL = "https://api-gym.factura-e.net/api/"
 
 const HttpService = {
     async registrar(datos, ruta){

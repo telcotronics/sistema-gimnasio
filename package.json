@@ -1,8 +1,8 @@
 {
   "name": "sistema-gimnasio",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Sistema para gimnasio",
-  "author": "PacoHunterDev",
+  "author": "PacoHunterDev, Pablinux",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -15,7 +15,7 @@
     "sass": "^1.32.8",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "vuetify": "^2.6.6"
+    "vuetify": "^2.7.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

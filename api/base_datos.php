@@ -48,8 +48,8 @@ function editar($sentencia, $parametros ){
 function conectarBaseDatos() {
 	$host = "localhost";
 	$db   = "sistema_gimnasio";
-	$user = "root";
-	$pass = "";
+	$user = "admin";
+	$pass = "Dx.1706%";
 	$charset = 'utf8mb4';
 
 	$options = [
