@@ -91,15 +91,15 @@ export default {
         nombre: "",
         telefono: "",
         direccion: "",
-        edad: 10,
+        edad: 18,
       },
       datosContacto: {
         sufreEnfermedad: false,
         tieneSeguro: false,
-        enfermedad: "",
-        institucion: "",
-        nombreContacto: "",
-        telefonoContacto: "",
+        enfermedad: "No",
+        institucion: "No",
+        nombreContacto: "Ninguno",
+        telefonoContacto: "0",
       },
       imagen: null
     }

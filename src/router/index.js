@@ -15,6 +15,9 @@ import Visitas from '../components/Visitas/Visitas'
 import ConfiguracionComponent from '../components/Configuracion/ConfiguracionComponent'
 import InicioComponent from '../components/InicioComponent'
 import MiPerfil from '../components/Usuarios/MiPerfil'
+import Chat from '../components/Chat/Chat_ws'
+import Envia_msg from '../components/Chat/Envia_msg.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -78,6 +81,16 @@ export default new Router({
       path: '/visitas',
       name: 'Visitas',
       component: Visitas
+    },
+    {
+      path: '/chat',
+      name: 'Chat',
+      component: Chat
+    },
+    {
+      path: '/enviar_msg',
+      name: 'Notificar Miembros',
+      component: Envia_msg
     },
     {
       path: '/configurar',
