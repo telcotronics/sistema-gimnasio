@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Membresias from '../components/Membresias/Membresias'
+import CrearMembresia from '../components/Membresias/Crear_membresias'
 import Miembros from '../components/Miembros/Miembros'
 import EditarMiembro from '../components/Miembros/EditarMiembro'
 import Usuarios from '../components/Usuarios/Usuarios'
@@ -31,6 +32,11 @@ export default new Router({
       path: '/membresias',
       name: 'Membresias',
       component: Membresias
+    },
+    {
+      path: '/crear_membresia',
+      name: 'CrearMembresia',
+      component: CrearMembresia
     },
     {
       path: '/miembros',

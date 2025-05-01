@@ -62,6 +62,7 @@ export default {
       { title: "Registrar visita", icon: "mdi-home-account", link: "/registrar-visita" },
       { title: "Usuarios", icon: "mdi-account-box", link: "/usuarios" },
       { title: "Miembros", icon: "mdi-weight-lifter", link: "/miembros" },
+      { title: "Crear Menbresias", icon: "mdi-weight-lifter", link: "/crear_membresia" },
       { title: "Membresías", icon: "mdi-wallet-membership", link: "/membresias", },
       { title: "Pagos", icon: "mdi-account-cash", link: "/pagos" },
       { title: "Visitas", icon: "mdi-calendar-star", link: "/visitas" },
