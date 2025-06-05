@@ -10,7 +10,21 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      // Elige un prefijo para tus rutas de API que pasarán por el proxy.
+      // Usaremos '/api_proxy' como en el ejemplo anterior.
+      '/api_proxy': {
+        target: 'https://app.factura-e.net', // La URL base de la API externa
+        //target: 'https://app.siax-system.net/', // La URL base de la API externa
+        changeOrigin: true, // Esencial. Fija el encabezado 'Host' de la solicitud proxy al del 'target'
+        pathRewrite: {
+          '^/api_proxy': '', // Elimina '/api_proxy' de la URL antes de enviarla al 'target'.
+          // Así, una llamada a '/api_proxy/rutaEspecifica' se convierte en 'https://factura-e.net/rutaEspecifica'
+        },
+        // Si necesitas más detalles sobre lo que hace el proxy, puedes agregar:
+        logLevel: 'debug'
+      },
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -20,7 +34,7 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
+
     /**
      * Source Maps
      */

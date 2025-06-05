@@ -1,54 +1,97 @@
 <template>
   <div>
-    <v-app-bar color="primary" class="flex-grow-0" app dark>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>
-        <img src="@/assets/logo.png" width="200">
+    <!-- App Bar con gradiente y efectos -->
+    <v-app-bar 
+      color="transparent" 
+      class="app-bar-gradient flex-grow-0 backdrop-blur" 
+      app 
+      dark 
+      elevation="0"
+      height="70"
+    >
+      <v-app-bar-nav-icon 
+        @click.stop="drawer = !drawer"
+        class="nav-icon-hover"
+      ></v-app-bar-nav-icon>
+      
+      <v-toolbar-title class="logo-container">
+        <img src="@/assets/logo.png" width="200" class="logo-image">
       </v-toolbar-title>
+      
       <v-spacer></v-spacer>
 
-      <v-btn icon @click="salir">
-        <v-icon>logout</v-icon>
+      <!-- Botón de logout mejorado -->
+      <v-btn 
+        icon 
+        @click="salir" 
+        class="logout-btn"
+        large
+      >
+        <v-icon size="24">mdi-logout</v-icon>
       </v-btn>
     </v-app-bar>
-    <v-navigation-drawer app v-model="drawer" class="fondo">
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="text-h6 white--text"> 
-            <v-avatar>
-              <img
-                :src="urlImagen(logo)"
-                alt="Logo"
-              >
-            </v-avatar>
-            {{ nombreGimnasio }}
-            </v-list-item-title>
-          <v-list-item-subtitle class="text-h6 white--text"> {{ nombreUsuario }} </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-divider></v-divider>
-      <v-list dense nav>
+
+    <!-- Navigation Drawer mejorado -->
+    <v-navigation-drawer 
+      app 
+      v-model="drawer" 
+      class="navigation-drawer"
+      width="280"
+    >
+      <!-- Header del drawer con información del usuario -->
+      <div class="drawer-header">
+        <div class="user-info-container">
+          <v-avatar size="60" class="user-avatar">
+            <img
+              :src="urlImagen(logo)"
+              alt="Logo"
+            >
+          </v-avatar>
+          <div class="user-details">
+            <h3 class="gym-name">{{ nombreGimnasio }}</h3>
+            <p class="user-name">{{ nombreUsuario }}</p>
+          </div>
+        </div>
+      </div>
+
+      <v-divider class="custom-divider"></v-divider>
+
+      <!-- Lista de navegación mejorada -->
+      <v-list class="navigation-list" dense nav>
         <v-list-item
-          v-for="item in items"
+          v-for="(item) in items"
           :key="item.title"
           link
           :to="item.link"
-          class="white--text"
+          class="nav-item"
+          :class="{ 'nav-item-active': isActiveRoute(item.link) }"
         >
-          <v-list-item-icon >
-            <v-icon class="white--text">{{ item.icon }}</v-icon>
+          <v-list-item-icon class="nav-icon">
+            <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title class="nav-title">{{ item.title }}</v-list-item-title>
           </v-list-item-content>
+
+          <!-- Indicador de ruta activa -->
+          <div class="active-indicator" v-if="isActiveRoute(item.link)"></div>
         </v-list-item>
       </v-list>
+
+      <!-- Footer del drawer -->
+      <div class="drawer-footer">
+        <div class="version-info">
+          <small>Versión 2.0</small>
+        </div>
+      </div>
     </v-navigation-drawer>
   </div>
 </template>
+
 <script>
 import Utiles from '../Servicios/Utiles'
+
 export default {
   name: "Encabezado",
 
@@ -62,27 +105,26 @@ export default {
       { title: "Registrar visita", icon: "mdi-home-account", link: "/registrar-visita" },
       { title: "Usuarios", icon: "mdi-account-box", link: "/usuarios" },
       { title: "Miembros", icon: "mdi-weight-lifter", link: "/miembros" },
-      { title: "Crear Menbresias", icon: "mdi-weight-lifter", link: "/crear_membresia" },
-      { title: "Membresías", icon: "mdi-wallet-membership", link: "/membresias", },
+      { title: "Membresías List", icon: "mdi-wallet-membership", link: "/crud_membresias" },
+      { title: "Membresías", icon: "mdi-wallet-membership", link: "/membresias" },
+      { title: "Clientes", icon: "mdi-account-multiple", link: "/clientes" },
       { title: "Pagos", icon: "mdi-account-cash", link: "/pagos" },
       { title: "Visitas", icon: "mdi-calendar-star", link: "/visitas" },
       { title: "Chat Bot", icon: "mdi-chat", link: "/chat" },
-      { title: "Notificar Usuario",icon: "mdi-chat", link: "/enviar_msg" },
+      { title: "Notificar Usuario", icon: "mdi-bell-ring", link: "/enviar_msg" },
       { title: "Configurar", icon: "mdi-cog", link: "/configurar" },
       { title: "Mi perfil", icon: "mdi-account-key", link: "/perfil" },
-      
     ],
   }),
 
-  mounted(){
+  mounted() {
     this.nombreUsuario = localStorage.getItem("nombreUsuario")
     this.nombreGimnasio = localStorage.getItem("nombreGimnasio")
     this.logo = localStorage.getItem("logoGimnasio")
-
   },
 
-  methods:{ 
-    salir(){
+  methods: { 
+    salir() {
       localStorage.removeItem('logeado')
       localStorage.removeItem('nombreUsuario')
       localStorage.removeItem('idUsuario')
@@ -93,14 +135,298 @@ export default {
       return Utiles.generarURL(imagen);
     },
 
+    isActiveRoute(route) {
+      return this.$route.path === route;
+    }
   }
 };
 </script>
-<style>
-.fondo {
-  background-color: #1706FF;
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg %3E%3Cpath fill='%23081bff' d='M486 705.8c-109.3-21.8-223.4-32.2-335.3-19.4C99.5 692.1 49 703 0 719.8V800h843.8c-115.9-33.2-230.8-68.1-347.6-92.2C492.8 707.1 489.4 706.5 486 705.8z'/%3E%3Cpath fill='%230a41ff' d='M1600 0H0v719.8c49-16.8 99.5-27.8 150.7-33.5c111.9-12.7 226-2.4 335.3 19.4c3.4 0.7 6.8 1.4 10.2 2c116.8 24 231.7 59 347.6 92.2H1600V0z'/%3E%3Cpath fill='%230c66ff' d='M478.4 581c3.2 0.8 6.4 1.7 9.5 2.5c196.2 52.5 388.7 133.5 593.5 176.6c174.2 36.6 349.5 29.2 518.6-10.2V0H0v574.9c52.3-17.6 106.5-27.7 161.1-30.9C268.4 537.4 375.7 554.2 478.4 581z'/%3E%3Cpath fill='%230e8aff' d='M0 0v429.4c55.6-18.4 113.5-27.3 171.4-27.7c102.8-0.8 203.2 22.7 299.3 54.5c3 1 5.9 2 8.9 3c183.6 62 365.7 146.1 562.4 192.1c186.7 43.7 376.3 34.4 557.9-12.6V0H0z'/%3E%3Cpath fill='%2310AEFF' d='M181.8 259.4c98.2 6 191.9 35.2 281.3 72.1c2.8 1.1 5.5 2.3 8.3 3.4c171 71.6 342.7 158.5 531.3 207.7c198.8 51.8 403.4 40.8 597.3-14.8V0H0v283.2C59 263.6 120.6 255.7 181.8 259.4z'/%3E%3Cpath fill='%231292ff' d='M1600 0H0v136.3c62.3-20.9 127.7-27.5 192.2-19.2c93.6 12.1 180.5 47.7 263.3 89.6c2.6 1.3 5.1 2.6 7.7 3.9c158.4 81.1 319.7 170.9 500.3 223.2c210.5 61 430.8 49 636.6-16.6V0z'/%3E%3Cpath fill='%231377ff' d='M454.9 86.3C600.7 177 751.6 269.3 924.1 325c208.6 67.4 431.3 60.8 637.9-5.3c12.8-4.1 25.4-8.4 38.1-12.9V0H288.1c56 21.3 108.7 50.6 159.7 82C450.2 83.4 452.5 84.9 454.9 86.3z'/%3E%3Cpath fill='%23155cff' d='M1600 0H498c118.1 85.8 243.5 164.5 386.8 216.2c191.8 69.2 400 74.7 595 21.1c40.8-11.2 81.1-25.2 120.3-41.7V0z'/%3E%3Cpath fill='%231642ff' d='M1397.5 154.8c47.2-10.6 93.6-25.3 138.6-43.8c21.7-8.9 43-18.8 63.9-29.5V0H643.4c62.9 41.7 129.7 78.2 202.1 107.4C1020.4 178.1 1214.2 196.1 1397.5 154.8z'/%3E%3Cpath fill='%231828FF' d='M1315.3 72.4c75.3-12.6 148.9-37.1 216.8-72.4h-723C966.8 71 1144.7 101 1315.3 72.4z'/%3E%3C/g%3E%3C/svg%3E");
-background-attachment: fixed;
-background-size: cover;
+
+<style scoped>
+/* App Bar Styles */
+.app-bar-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.nav-icon-hover {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.nav-icon-hover:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.logo-image:hover {
+  transform: scale(1.02);
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation Drawer Styles */
+.navigation-drawer {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.drawer-header {
+  padding: 24px 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-avatar {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-details {
+  flex: 1;
+}
+
+.gym-name {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.user-name {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin: 0;
+  font-weight: 400;
+}
+
+.custom-divider {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  margin: 0 20px;
+}
+
+/* Navigation List Styles */
+.navigation-list {
+  padding: 12px 0;
+}
+
+.nav-item {
+  margin: 4px 12px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-item:hover::before {
+  opacity: 1;
+}
+
+.nav-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.nav-item-active {
+  background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+  border-left: 4px solid #667eea;
+}
+
+.nav-item-active::before {
+  opacity: 1;
+}
+
+.nav-icon {
+  margin-right: 12px !important;
+  min-width: 40px !important;
+}
+
+.nav-icon .v-icon {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover .nav-icon .v-icon,
+.nav-item-active .nav-icon .v-icon {
+  color: #ffffff !important;
+  transform: scale(1.1);
+}
+
+.nav-title {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.nav-item:hover .nav-title,
+.nav-item-active .nav-title {
+  color: #ffffff !important;
+}
+
+.active-indicator {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #667eea;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(103, 126, 234, 0.6);
+}
+
+/* Drawer Footer */
+.drawer-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.version-info {
+  text-align: center;
+}
+
+.version-info small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navigation-drawer {
+    width: 100% !important;
+  }
+  
+  .drawer-header {
+    padding: 20px 16px;
+  }
+  
+  .user-info-container {
+    gap: 12px;
+  }
+  
+  .user-avatar {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  
+  .gym-name {
+    font-size: 14px;
+  }
+  
+  .user-name {
+    font-size: 12px;
+  }
+}
+
+/* Animaciones adicionales */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.nav-item {
+  animation: slideIn 0.3s ease forwards;
+}
+
+.nav-item:nth-child(1) { animation-delay: 0.1s; }
+.nav-item:nth-child(2) { animation-delay: 0.15s; }
+.nav-item:nth-child(3) { animation-delay: 0.2s; }
+.nav-item:nth-child(4) { animation-delay: 0.25s; }
+.nav-item:nth-child(5) { animation-delay: 0.3s; }
+.nav-item:nth-child(6) { animation-delay: 0.35s; }
+.nav-item:nth-child(7) { animation-delay: 0.4s; }
+.nav-item:nth-child(8) { animation-delay: 0.45s; }
+.nav-item:nth-child(9) { animation-delay: 0.5s; }
+.nav-item:nth-child(10) { animation-delay: 0.55s; }
+.nav-item:nth-child(11) { animation-delay: 0.6s; }
+.nav-item:nth-child(12) { animation-delay: 0.65s; }
+.nav-item:nth-child(13) { animation-delay: 0.7s; }
+
+/* Efectos de scroll suave */
+.navigation-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.navigation-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.navigation-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navigation-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.navigation-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 </style>

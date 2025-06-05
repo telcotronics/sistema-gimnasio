@@ -1,52 +1,148 @@
 <template>
   <div class="fondo">
     <v-container fluid fill-height>
-    <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md4>
-        <v-card class="elevation-12" height="100%">
-          <v-toolbar dark color="primary">
-            <v-toolbar-title>Iniciar sesión</v-toolbar-title>
-          </v-toolbar>
-          <v-card-text>
-            <v-form>
-              <v-text-field
-                prepend-icon="person"
-                name="login"
-                label="Usuario"
-                type="text"
-                v-model="usuario"
-              ></v-text-field>
-              <v-text-field
-                id="password"
-                prepend-icon="lock"
-                name="password"
-                label="Contraseña"
-                type="password"
-                v-model="password"
-              ></v-text-field>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" @click="iniciarSesion">Ingresar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-flex>
+      <v-layout align-center justify-center>
+        <v-flex xs12 sm8 md5 lg4>
+          <v-card class="login-card elevation-24" shaped>
+            <!-- Header con logo y título -->
+            <div class="login-header">
+              <div class="logo-container">
+                <v-icon size="48" color="white">fitness_center</v-icon>
+              </div>
+              <h2 class="login-title">Bienvenido</h2>
+              <p class="login-subtitle">Inicia sesión en tu cuenta</p>
+            </div>
 
-    </v-layout>
-    <v-snackbar
+            <!-- Formulario -->
+            <v-card-text class="login-form-container">
+              <v-form ref="form" v-model="formularioValido" lazy-validation>
+                <div class="input-group">
+                  <v-text-field
+                    v-model="usuario"
+                    prepend-inner-icon="person"
+                    label="Usuario"
+                    type="text"
+                    outlined
+                    color="primary"
+                    :rules="reglasUsuario"
+                    class="custom-input"
+                    hide-details="auto"
+                  ></v-text-field>
+                </div>
+
+                <div class="input-group">
+                  <v-text-field
+                    v-model="password"
+                    prepend-inner-icon="lock"
+                    :append-icon="mostrarPassword ? 'visibility' : 'visibility_off'"
+                    @click:append="mostrarPassword = !mostrarPassword"
+                    label="Contraseña"
+                    :type="mostrarPassword ? 'text' : 'password'"
+                    outlined
+                    color="primary"
+                    :rules="reglasPassword"
+                    class="custom-input"
+                    hide-details="auto"
+                  ></v-text-field>
+                </div>
+
+                <!-- Recordar sesión -->
+                <div class="remember-forgot">
+                  <v-checkbox
+                    v-model="recordarSesion"
+                    label="Recordar sesión"
+                    color="primary"
+                    dense
+                    hide-details
+                  ></v-checkbox>
+                  <v-btn
+                    text
+                    color="primary"
+                    small
+                    class="forgot-password"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </v-btn>
+                </div>
+              </v-form>
+            </v-card-text>
+
+            <!-- Botones de acción -->
+            <v-card-actions class="login-actions">
+              <v-btn
+                color="primary"
+                large
+                :loading="cargando"
+                :disabled="!formularioValido"
+                @click="iniciarSesion"
+                class="login-btn"
+                block
+                shaped
+              >
+                <v-icon left>login</v-icon>
+                Iniciar Sesión
+              </v-btn>
+            </v-card-actions>
+
+            <!-- Divider y registro -->
+            <div class="divider-section">
+              <v-divider></v-divider>
+              <span class="divider-text">o</span>
+              <v-divider></v-divider>
+            </div>
+
+            <div class="register-section">
+              <p class="register-text">
+                ¿No tienes cuenta?
+                <v-btn
+                  text
+                  color="primary"
+                  small
+                  class="register-link"
+                >
+                  Regístrate aquí
+                </v-btn>
+              </p>
+            </div>
+          </v-card>
+        </v-flex>
+      </v-layout>
+
+      <!-- Snackbar mejorado -->
+      <v-snackbar
         v-model="mostrarMensaje"
-        :timeout="3000"
+        :timeout="4000"
         :color="mensaje.color"
         top
+        shaped
+        class="custom-snackbar"
+      >
+        <div class="snackbar-content">
+          <v-icon class="snackbar-icon">
+            {{ mensaje.color === 'success' ? 'check_circle' : 'error' }}
+          </v-icon>
+          {{ mensaje.texto }}
+        </div>
+        <v-btn
+          icon
+          @click="mostrarMensaje = false"
         >
-        {{ mensaje.texto }}
-    </v-snackbar>
-    </v-container>
-    <img src="https://2.bp.blogspot.com/-jKpjKDz7IMA/W7z4LIu9k_I/AAAAAAAACoA/r7AvmvmDDkomR1KA96D1cvBV5gom69zOgCLcBGAs/s0/gym.png" alt="">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-snackbar>
 
+      <!-- Imagen de fondo opcional -->
+      <div class="background-image">
+        <img 
+          src="https://2.bp.blogspot.com/-jKpjKDz7IMA/W7z4LIu9k_I/AAAAAAAACoA/r7AvmvmDDkomR1KA96D1cvBV5gom69zOgCLcBGAs/s0/gym.png" 
+          alt="Gym background"
+          class="gym-image"
+        >
+      </div>
+    </v-container>
   </div>
 </template>
+
 <script>
 import HttpService from '../../Servicios/HttpService'
 
@@ -56,51 +152,342 @@ export default {
   data: () => ({
     usuario: "",
     password: "",
+    recordarSesion: false,
+    mostrarPassword: false,
+    formularioValido: false,
+    cargando: false,
     mensaje: {
       texto: "",
       color: "",
     },
-    mostrarMensaje: false
+    mostrarMensaje: false,
+    reglasUsuario: [
+      v => !!v || 'El usuario es requerido',
+      v => (v && v.length >= 3) || 'El usuario debe tener al menos 3 caracteres',
+    ],
+    reglasPassword: [
+      v => !!v || 'La contraseña es requerida',
+      v => (v && v.length >= 6) || 'La contraseña debe tener al menos 6 caracteres',
+    ],
   }),
 
   methods: {
-    iniciarSesion() {
-      if (!this.usuario) {
-          this.mostrarMensaje = true
-          this.mensaje.texto = "Debes colocar el usuario"
-          this.mensaje.color = "warning"
-          return
-      }
-      if (!this.password) {
-          this.mostrarMensaje = true
-          this.mensaje.texto = "Debes colocar la contraseña"
-          this.mensaje.color = "warning"
-          return
-      }
-      let payload = {
+    async iniciarSesion() {
+      // Validar formulario
+      if (!this.$refs.form.validate()) return
+
+      this.cargando = true
+
+      try {
+        let payload = {
           metodo: "login",
           usuario: {
-              usuario:this.usuario,
-              password: this.password
+            usuario: this.usuario,
+            password: this.password
           }
-      }
-      HttpService.obtenerConDatos(payload, "usuarios.php")
-      .then(resultado => {
-          if(resultado) {
-              this.$emit("logeado", resultado)
-          }
-      })
+        }
 
-      
+        const resultado = await HttpService.obtenerConDatos(payload, "usuarios.php")
+        
+        if (resultado) {
+          this.mostrarMensajeExito("¡Bienvenido! Iniciando sesión...")
+          setTimeout(() => {
+            this.$emit("logeado", resultado)
+          }, 1500)
+        } else {
+          this.mostrarMensajeError("Credenciales incorrectas")
+        }
+      } catch (error) {
+        this.mostrarMensajeError("Error al conectar con el servidor")
+      } finally {
+        this.cargando = false
+      }
     },
+
+    mostrarMensajeExito(texto) {
+      this.mostrarMensaje = true
+      this.mensaje.texto = texto
+      this.mensaje.color = "success"
+    },
+
+    mostrarMensajeError(texto) {
+      this.mostrarMensaje = true
+      this.mensaje.texto = texto
+      this.mensaje.color = "error"
+    }
   },
 };
 </script>
-<style >
-.fondo{
-  background-color: #1706FF;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg %3E%3Cpath fill='%23081bff' d='M486 705.8c-109.3-21.8-223.4-32.2-335.3-19.4C99.5 692.1 49 703 0 719.8V800h843.8c-115.9-33.2-230.8-68.1-347.6-92.2C492.8 707.1 489.4 706.5 486 705.8z'/%3E%3Cpath fill='%230a41ff' d='M1600 0H0v719.8c49-16.8 99.5-27.8 150.7-33.5c111.9-12.7 226-2.4 335.3 19.4c3.4 0.7 6.8 1.4 10.2 2c116.8 24 231.7 59 347.6 92.2H1600V0z'/%3E%3Cpath fill='%230c66ff' d='M478.4 581c3.2 0.8 6.4 1.7 9.5 2.5c196.2 52.5 388.7 133.5 593.5 176.6c174.2 36.6 349.5 29.2 518.6-10.2V0H0v574.9c52.3-17.6 106.5-27.7 161.1-30.9C268.4 537.4 375.7 554.2 478.4 581z'/%3E%3Cpath fill='%230e8aff' d='M0 0v429.4c55.6-18.4 113.5-27.3 171.4-27.7c102.8-0.8 203.2 22.7 299.3 54.5c3 1 5.9 2 8.9 3c183.6 62 365.7 146.1 562.4 192.1c186.7 43.7 376.3 34.4 557.9-12.6V0H0z'/%3E%3Cpath fill='%2310AEFF' d='M181.8 259.4c98.2 6 191.9 35.2 281.3 72.1c2.8 1.1 5.5 2.3 8.3 3.4c171 71.6 342.7 158.5 531.3 207.7c198.8 51.8 403.4 40.8 597.3-14.8V0H0v283.2C59 263.6 120.6 255.7 181.8 259.4z'/%3E%3Cpath fill='%231292ff' d='M1600 0H0v136.3c62.3-20.9 127.7-27.5 192.2-19.2c93.6 12.1 180.5 47.7 263.3 89.6c2.6 1.3 5.1 2.6 7.7 3.9c158.4 81.1 319.7 170.9 500.3 223.2c210.5 61 430.8 49 636.6-16.6V0z'/%3E%3Cpath fill='%231377ff' d='M454.9 86.3C600.7 177 751.6 269.3 924.1 325c208.6 67.4 431.3 60.8 637.9-5.3c12.8-4.1 25.4-8.4 38.1-12.9V0H288.1c56 21.3 108.7 50.6 159.7 82C450.2 83.4 452.5 84.9 454.9 86.3z'/%3E%3Cpath fill='%23155cff' d='M1600 0H498c118.1 85.8 243.5 164.5 386.8 216.2c191.8 69.2 400 74.7 595 21.1c40.8-11.2 81.1-25.2 120.3-41.7V0z'/%3E%3Cpath fill='%231642ff' d='M1397.5 154.8c47.2-10.6 93.6-25.3 138.6-43.8c21.7-8.9 43-18.8 63.9-29.5V0H643.4c62.9 41.7 129.7 78.2 202.1 107.4C1020.4 178.1 1214.2 196.1 1397.5 154.8z'/%3E%3Cpath fill='%231828FF' d='M1315.3 72.4c75.3-12.6 148.9-37.1 216.8-72.4h-723C966.8 71 1144.7 101 1315.3 72.4z'/%3E%3C/g%3E%3C/svg%3E");
+
+<style scoped>
+.fondo {
+  /* OPCIÓN 1: Azul con violeta (original) */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* OPCIÓN 2: Azul con verde esmeralda */
+  /* background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); */
+  
+  /* OPCIÓN 3: Azul marino con turquesa */
+  /* background: linear-gradient(135deg, #2980b9 0%, #6bb6ff 100%); */
+  
+  /* OPCIÓN 4: Azul royal con púrpura */
+  /* background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); */
+  
+  /* OPCIÓN 5: Azul cielo con rosa */
+  /* background: linear-gradient(135deg, #74b9ff 0%, #fd79a8 100%); */
+  
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.fondo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg fill-opacity='0.1'%3E%3Cpath fill='%23ffffff' d='M486 705.8c-109.3-21.8-223.4-32.2-335.3-19.4C99.5 692.1 49 703 0 719.8V800h843.8c-115.9-33.2-230.8-68.1-347.6-92.2C492.8 707.1 489.4 706.5 486 705.8z'/%3E%3Cpath fill='%23ffffff' d='M1600 0H0v719.8c49-16.8 99.5-27.8 150.7-33.5c111.9-12.7 226-2.4 335.3 19.4c3.4 0.7 6.8 1.4 10.2 2c116.8 24 231.7 59 347.6 92.2H1600V0z'/%3E%3C/g%3E%3C/svg%3E");
   background-attachment: fixed;
   background-size: cover;
+  z-index: -1;
+}
+
+.login-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 450px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 16px !important;
+}
+
+.login-header {
+  /* OPCIÓN 1: Azul con violeta (original) */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* OPCIÓN 2: Azul con verde esmeralda */
+  /* background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); */
+  
+  /* OPCIÓN 3: Azul marino con turquesa */
+  /* background: linear-gradient(135deg, #2980b9 0%, #6bb6ff 100%); */
+  
+  /* OPCIÓN 4: Azul royal con púrpura */
+  /* background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); */
+  
+  /* OPCIÓN 5: Azul cielo con rosa */
+  /* background: linear-gradient(135deg, #74b9ff 0%, #fd79a8 100%); */
+  
+  color: white;
+  text-align: center;
+  padding: 40px 30px 30px;
+  position: relative;
+}
+
+.logo-container {
+  margin-bottom: 16px;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-subtitle {
+  font-size: 16px;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 300;
+}
+
+.login-form-container {
+  padding: 40px 30px 20px;
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.custom-input {
+  transition: all 0.3s ease;
+}
+
+/* Vuetify 2 deep selector */
+.custom-input >>> .v-input__control .v-input__slot {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-input:hover >>> .v-input__control .v-input__slot {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.forgot-password {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-actions {
+  padding: 0 30px 30px;
+}
+
+.login-btn {
+  height: 50px !important;
+  font-size: 16px !important;
+  font-weight: 600;
+  text-transform: none !important;
+  /* OPCIÓN 1: Sombra azul-violeta (original) */
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+  
+  /* OPCIÓN 2: Sombra azul-verde */
+  /* box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4) !important; */
+  
+  /* OPCIÓN 3: Sombra azul marino */
+  /* box-shadow: 0 4px 12px rgba(41, 128, 185, 0.4) !important; */
+  
+  /* OPCIÓN 4: Sombra azul royal */
+  /* box-shadow: 0 4px 12px rgba(30, 60, 114, 0.4) !important; */
+  
+  /* OPCIÓN 5: Sombra azul cielo */
+  /* box-shadow: 0 4px 12px rgba(116, 185, 255, 0.4) !important; */
+  
+  transition: all 0.3s ease;
+  border-radius: 12px !important;
+}
+
+.login-btn:hover {
+  /* OPCIÓN 1: Hover azul-violeta (original) */
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+  
+  /* OPCIÓN 2: Hover azul-verde */
+  /* box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6) !important; */
+  
+  /* OPCIÓN 3: Hover azul marino */
+  /* box-shadow: 0 6px 20px rgba(41, 128, 185, 0.6) !important; */
+  
+  /* OPCIÓN 4: Hover azul royal */
+  /* box-shadow: 0 6px 20px rgba(30, 60, 114, 0.6) !important; */
+  
+  /* OPCIÓN 5: Hover azul cielo */
+  /* box-shadow: 0 6px 20px rgba(116, 185, 255, 0.6) !important; */
+  
+  transform: translateY(-2px);
+}
+
+.divider-section {
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  margin: 10px 0;
+}
+
+.divider-text {
+  margin: 0 15px;
+  color: #666;
+  font-size: 14px;
+}
+
+.register-section {
+  text-align: center;
+  padding: 20px 30px 30px;
+}
+
+.register-text {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.register-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.custom-snackbar {
+  z-index: 9999;
+}
+
+.snackbar-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.snackbar-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.background-image {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.1;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.gym-image {
+  width: 120px;
+  height: auto;
+  filter: grayscale(100%);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .login-card {
+    margin: 16px;
+    max-width: none;
+  }
+  
+  .login-header {
+    padding: 30px 20px 25px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+  }
+  
+  .login-form-container {
+    padding: 30px 20px 15px;
+  }
+  
+  .login-actions {
+    padding: 0 20px 25px;
+  }
+  
+  .remember-forgot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card {
+  animation: fadeInUp 0.6s ease-out;
 }
 </style>

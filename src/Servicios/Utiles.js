@@ -1,13 +1,14 @@
 //require("dotenv").config();
 
 
-const RUTA_IMAGEN = "https://api-gym.factura-e.net/api/";
+const RUTA_IMAGEN = "https://api-gym.factura-e.net/";
 const DIAS = ["Domingo" ,"Lunes" ,"Martes" ,"Miércoles" ,"Jueves" ,"Viernes" ,"Sábado"]
 const MESES = ["Enero" ,"Febrero" ,"Marzo" ,"Abril" ,"Mayo" ,"Junio" ,"Julio" ,"Agosto" ,"Septiembre" ,"Octubre" ,"Noviembre" ,"Diciembre"]
 
 const Utiles = {
     generarURL(imagen) {
-        return RUTA_IMAGEN + imagen
+        //return RUTA_IMAGEN + imagen
+        return "@/assets/logo_gim.jpg";
     },
 
     obtenerClaves(array){
