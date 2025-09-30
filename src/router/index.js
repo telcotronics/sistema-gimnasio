@@ -7,6 +7,11 @@ import CrearPlanes from '../components/Membresias/Crear_planes.vue'
 import Miembros from '../components/Miembros/Miembros'
 import CRUD_membresias from '../components/Membresias/Crud_membresias.vue'
 import CRUD_MembresiaForm from '../components/Membresias/CRUD_MembresiaForm.vue'
+import CRUD_MembresiaCARD from '../components/Membresias/Crud_membresias_card.vue'
+import CRUD_miembrosCard from '../components/Miembros/Crud_miembros.vue'
+import CRUD_MiembroForm from '../components/Miembros/crud_miembrosForm.vue'
+import CRUD_Areas from '../components/Configuracion/CRUD_Areas.vue'
+
 import EditarMiembro from '../components/Miembros/EditarMiembro'
 import Usuarios from '../components/Usuarios/Usuarios'
 import NuevoMiembro from '../components/Miembros/NuevoMiembro'
@@ -14,11 +19,13 @@ import NuevoUsuario from '../components/Usuarios/NuevoUsuario'
 import nuevoCliente from '../components/Clientes/NuevoCliente.vue'
 import Clientes from '../components/Clientes/ListaClientes.vue'
 import EditarCliente from '../components/Clientes/EditarCliente.vue'
+import Cobros from '../components/Pagos/Form_regPagos.vue'
 
 import EditarUsuario from '../components/Usuarios/EditarUsuario'
 import CambiarPassword from '../components/Usuarios/CambiarPassword'
 import Pagos from '../components/Pagos/Pagos'
-import RegistrarVisita from '../components/Visitas/RegistrarVisita'
+import RegistrarVisita2 from '../components/Visitas/RegistrarVisita'
+import RegistrarVisita from '../components/Visitas/RegistroVisitaMiembro.vue'
 import Visitas from '../components/Visitas/Visitas'
 import ConfiguracionComponent from '../components/Configuracion/ConfiguracionComponent'
 import InicioComponent from '../components/InicioComponent'
@@ -51,6 +58,11 @@ export default new Router({
       component: CrearPlanes
     },
     {
+      path: '/crud_membresia_card',
+      name: 'CrudMembresiaCard',
+      component: CRUD_MembresiaCARD // Tu componente para listar
+    },
+    {
       path: '/crud_membresias',
       name: 'CrudMembresias',
       component: CRUD_membresias // Tu componente para listar
@@ -65,6 +77,26 @@ export default new Router({
       name: 'CrudEditarMembresia',
       component: CRUD_MembresiaForm, // ¡También apunta al componente unificado!
       props: true // Esto permite que el ID de la ruta se pase como prop al componente, aunque no lo estamos usando directamente, lo leemos de $route.params.id
+    }, 
+    {
+      path: '/crud_miembros_card',
+      name: 'CrudMiembrosCard',
+      component: CRUD_miembrosCard // Tu componente para listar miembros
+    },
+    {
+      path: '/crud_miembrosForm', // Asegúrate de que esta ruta exista
+      name: 'CrudCrearMiembro',
+      component: CRUD_MiembroForm // Debes tener este componente definido
+    },
+    {
+      path: '/crud_miembrosForm/:id', // Asegúrate de que esta ruta exista
+      name: 'CrudEditarMiembro',
+      component: CRUD_MiembroForm, // Debes tener este componente definido
+    },
+    {
+      path: '/admin-areas', // La ruta para acceder a este nuevo componente
+      name: 'AdminAreas',
+      component: CRUD_Areas
     },
     {
       path: '/miembros',
@@ -87,7 +119,7 @@ export default new Router({
       component: nuevoCliente
     },
     {
-      path: '/editar-cliente/:id', // <-- ¡Nueva ruta para edición!
+      path: '/editar-cliente/:client_rucCed', // <-- ¡Nueva ruta para edición!
       name: 'EditarCliente',
       component: EditarCliente,
       props: true // Esto pasa el 'id' de la URL como una prop al componente
@@ -121,11 +153,20 @@ export default new Router({
       path: '/pagos',
       name: 'Pagos',
       component: Pagos
+    },{
+      path: '/registrar-cobro',
+      name: 'Cobros',
+      component: Cobros
     },
     {
       path: '/registrar-visita',
       name: 'RegistrarVisita',
       component: RegistrarVisita
+    },
+    {
+      path: '/registrar-visita2',
+      name: 'RegistrarVisita2',
+      component: RegistrarVisita2
     },
     {
       path: '/visitas',

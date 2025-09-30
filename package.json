@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@mdi/font": "^6.7.96",
+    "jsbarcode": "^3.11.6",
     "printd": "^1.5.1",
+    "qrcode.vue": "^1.7.0",
     "sass": "^1.32.8",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",

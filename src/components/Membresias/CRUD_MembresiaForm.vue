@@ -1,872 +1,842 @@
 <template>
-    <div class="form-container">
-      <div class="form-card">
-        <div class="form-header">
-          <div class="header-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </div>
-          <h2 class="form-title">{{ isEditing ? 'Editar Tipo de Membresía' : 'Crear Nuevo Tipo de Membresía' }}</h2>
-          <p class="form-subtitle">{{ isEditing ? 'Modifica las características de este plan de membresía' : 'Define las características de un nuevo plan de membresía' }}</p>
-        </div>
-  
-        <form @submit.prevent="guardarTipoMembresia" class="member-form">
-          <div class="form-section">
-            <h3 class="section-title">Información del Plan</h3>
-            
-            <div class="form-group">
-              <label for="nombre_tipo" class="form-label">
-                <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-                Nombre del Tipo de Membresía
-              </label>
-              <input 
-                id="nombre_tipo" 
-                v-model="tipoMembresia.nombre_tipo" 
-                type="text" 
-                class="form-input"
-                placeholder="Ej: Membresía Anual VIP"
-                required 
-              />
-            </div>
-  
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="categoria_membresia" class="form-label">
-                        <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-                            <line x1="4" y1="22" x2="4" y2="15"/>
-                        </svg>
-                        Categoría
-                    </label>
-                    <input 
-                        id="categoria_membresia" 
-                        v-model="tipoMembresia.categoria_membresia" 
-                        type="text" 
-                        class="form-input"
-                        placeholder="Ej: Premium, Básico, Familiar"
-                    />
-                </div>
-  
-                <div class="form-group">
-                    <label for="es_grupal" class="form-label">
-                        <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                        Modalidad
-                    </label>
-                    <select id="es_grupal" v-model="tipoMembresia.es_grupal" class="form-select" required>
-                        <option disabled value="">Seleccione modalidad</option>
-                        <option :value="false">Individual</option>
-                        <option :value="true">Grupal</option>
-                    </select>
-                </div>
-            </div>
-  
-            <div class="form-group" v-if="tipoMembresia.es_grupal">
-                <label for="capacidad_maxima_miembros" class="form-label">
-                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Capacidad Máxima de Miembros
-                </label>
-                <input 
-                    id="capacidad_maxima_miembros" 
-                    v-model.number="tipoMembresia.capacidad_maxima_miembros" 
-                    type="number" 
-                    class="form-input"
-                    min="1"
-                    required 
-                />
-            </div>
-            
-          </div>
-  
-          <div class="form-section">
-            <h3 class="section-title">Características del Privilegio</h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="valor" class="form-label">
-                        <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <line x1="12" y1="1" x2="12" y2="23"/>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                        </svg>
-                        Valor ($)
-                    </label>
-                    <input 
-                        id="valor" 
-                        v-model.number="tipoMembresia.valor" 
-                        type="number" 
-                        step="0.01" 
-                        class="form-input"
-                        placeholder="0.00"
-                        required
-                    />
-                </div>
-  
-                <div class="form-group">
-                    <label for="duracion_dias" class="form-label">
-                        <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
-                        </svg>
-                        Duración (Días)
-                    </label>
-                    <input 
-                        id="duracion_dias" 
-                        v-model.number="tipoMembresia.duracion_dias" 
-                        type="number" 
-                        class="form-input"
-                        placeholder="Ej: 365 para anual, 30 para mensual"
-                        min="1"
-                    />
-                </div>
-            </div>
-  
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="visitas_maximas_diarias" class="form-label">
-                        <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        Visitas Máximas Diarias (opcional)
-                    </label>
-                    <input 
-                        id="visitas_maximas_diarias" 
-                        v-model.number="tipoMembresia.visitas_maximas_diarias" 
-                        type="number" 
-                        class="form-input"
-                        placeholder="0 para ilimitado, ej: 1, 2"
-                        min="0"
-                    />
-                </div>
-  
-                <div class="form-group">
-                    <label for="areas_de_acceso" class="form-label">
-                        <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                            <path d="M2 17l10 5 10-5"/>
-                            <path d="M2 12l10 5 10-5"/>
-                        </svg>
-                        Áreas de Acceso (separadas por coma)
-                    </label>
-                    <input 
-                        id="areas_de_acceso" 
-                        v-model="tipoMembresia.areas_de_acceso" 
-                        type="text" 
-                        class="form-input"
-                        placeholder="Ej: Gimnasio, Piscina, Canchas"
-                    />
-                </div>
-            </div>
-  
-            <div class="form-group">
-                <label for="id_combo_ensamblado_incluido" class="form-label">
-                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M21 15s-2 1-4 1-4-2-8-2-4 1-4 1V3s2-1 4-1 4 2 8 2 4-1 4-1z"/>
-                        <line x1="4" y1="22" x2="4" y2="15"/>
-                    </svg>
-                    Combo Ensamblado Incluido (opcional)
-                </label>
-                <select 
-                    id="id_combo_ensamblado_incluido" 
-                    v-model="tipoMembresia.id_combo_ensamblado_incluido" 
-                    class="form-select"
-                >
-                    <option :value="null">Ninguno</option>
-                    <option 
-                        v-for="combo in combosDisponibles" 
-                        :key="combo.PdctEnsb_ID" 
-                        :value="combo.PdctEnsb_ID"
-                    >
-                        {{ combo.PdctEnsb_codigoEnsamble }} - ${{ formatValue(combo.PdctEnsb_valor) }}
-                    </option>
-                </select>
-            </div>
-  
-            <div class="form-group" v-if="tipoMembresia.id_combo_ensamblado_incluido">
-                <label for="cantidad_combo_incluido" class="form-label">
-                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Cantidad de Combo Incluido
-                </label>
-                <input 
-                    id="cantidad_combo_incluido" 
-                    v-model.number="tipoMembresia.cantidad_combo_incluido" 
-                    type="number" 
-                    class="form-input"
-                    min="1"
-                    required
-                />
-            </div>
-  
-            <div class="form-group">
-                <label for="descripcion" class="form-label">
-                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <line x1="8" y1="6" x2="21" y2="6"/>
-                        <line x1="8" y1="12" x2="21" y2="12"/>
-                        <line x1="8" y1="18" x2="21" y2="18"/>
-                        <line x1="3" y1="6" x2="3.01" y2="6"/>
-                        <line x1="3" y1="12" x2="3.01" y2="12"/>
-                        <line x1="3" y1="18" x2="3.01" y2="18"/>
-                    </svg>
-                    Descripción del Plan
-                </label>
-                <textarea 
-                    id="descripcion" 
-                    v-model="tipoMembresia.descripcion" 
-                    class="form-input"
-                    placeholder="Descripción detallada del tipo de membresía, beneficios, etc."
-                    rows="3"
-                ></textarea>
-            </div>
-  
-            <div class="form-group" v-if="isEditing">
-                <label for="estado_tipo" class="form-label">
-                    <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <polyline points="9,11 12,14 22,4"/>
-                        <path d="M21,12v7a2,2 0 0,1-2,2H5a2,2 0 0,1-2-2V5a2,2 0 0,1,2-2h11"/>
-                    </svg>
-                    Estado del Tipo de Membresía
-                </label>
-                <select id="estado_tipo" v-model="tipoMembresia.estado_tipo" class="form-select" required>
-                    <option disabled value="">Seleccione estado</option>
-                    <option value="ACTIVO">ACTIVO</option>
-                    <option value="DESCONTINUADO">DESCONTINUADO</option>
-                    <option value="ELIMINADO">ELIMINADO</option>
-                </select>
-            </div>
-          </div>
-  
-          <div class="form-actions">
-            <button type="button" class="btn-back" @click="volverAtras">
-              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M19 12H5"/>
-                <path d="M12 19l-7-7 7-7"/>
-              </svg>
-              Atrás
-            </button>
-            <div class="action-buttons">
-              <button type="button" class="btn-secondary" @click="resetFormulario">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="1,4 1,10 7,10"/>
-                  <path d="M3.51,15a9,9 0 1,0,2.13-9.36L1,10"/>
-                </svg>
-                Limpiar
-              </button>
-              <button type="submit" class="btn-primary">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="20,6 9,17 4,12"/>
-                </svg>
-                {{ isEditing ? 'Actualizar Membresía' : 'Crear Tipo de Membresía' }}
-              </button>
-            </div>
-          </div>
-        </form>
-  
-        <div v-if="mensaje" class="alert alert-success">
-          <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <polyline points="20,6 9,17 4,12"/>
-          </svg>
-          <div class="alert-content">
-            <strong>¡Éxito!</strong>
-            <p>{{ mensaje }}</p>
-          </div>
-        </div>
-  
-        <div v-if="error" class="alert alert-error">
-          <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-          </svg>
-          <div class="alert-content">
-            <strong>Error</strong>
-            <p>{{ error }}</p>
-          </div>
-        </div>
+  <div class="membresia-form-container">
+    <h1 class="title">{{ isEditMode ? 'Editar Tipo de Membresía' : 'Crear Nuevo Tipo de Membresía' }}</h1>
+    <hr class="divider">
+
+    <form @submit.prevent="submitForm" class="membresia-form">
+      <div class="form-group">
+        <label for="nombre_tipo">Nombre del Tipo:</label>
+        <input type="text" id="nombre_tipo" v-model="membresia.nombre_tipo" required>
+        <span v-if="formErrors.nombre_tipo" class="error-message">{{ formErrors.nombre_tipo }}</span>
       </div>
-    </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    // Renombrado para ser más genérico, aunque si tu router lo llama CRUD_crearMembresia, puedes mantenerlo.
-    // Idealmente, este componente sería usado por ambas rutas: /crud_crear_membresia y /crud_editar_membresia/:id
-    name: 'CRUD_MembresiaForm', 
-    data() {
-      return {
-        tipoMembresia: { 
-          id_tipo_membresia: null, // Agregamos este campo para saber si estamos editando
-          nombre_tipo: '',
-          categoria_membresia: '',
-          es_grupal: false, 
-          capacidad_maxima_miembros: 1, 
-          valor: null,
-          descripcion: '',
-          duracion_dias: null,
-          visitas_maximas_diarias: null,
-          areas_de_acceso: '',
-          id_combo_ensamblado_incluido: null, 
-          cantidad_combo_incluido: 1, 
-          estado_tipo: 'ACTIVO' // Estado inicial al crear
-        },
-        combosDisponibles: [], 
-        mensaje: '',
-        error: ''
-      };
-    },
-    computed: {
-      isEditing() {
-        // Verifica si hay un ID en la ruta para determinar si estamos editando
-        return !!this.$route.params.id; 
+
+      <div class="form-group">
+        <label for="categoria_membresia">Categoría:</label>
+        <input type="text" id="categoria_membresia" v-model="membresia.categoria_membresia">
+      </div>
+
+      <div class="form-group radio-group">
+        <label>Es Grupal:</label>
+        <div>
+          <label>
+            <input type="radio" v-model="membresia.es_grupal" :value="true"> Sí
+          </label>
+          <label>
+            <input type="radio" v-model="membresia.es_grupal" :value="false"> No
+          </label>
+        </div>
+        <span v-if="formErrors.es_grupal" class="error-message">{{ formErrors.es_grupal }}</span>
+      </div>
+
+      <div class="form-group">
+        <label for="capacidad_maxima_miembros">Capacidad Máxima Miembros:</label>
+        <input
+          type="number"
+          id="capacidad_maxima_miembros"
+          v-model.number="membresia.capacidad_maxima_miembros"
+          min="1"
+          :disabled="!membresia.es_grupal"
+          :class="{ 'disabled-field': !membresia.es_grupal }"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="valor">Valor:</label>
+        <input type="number" id="valor" v-model.number="membresia.valor" step="0.01" required min="0">
+        <span v-if="formErrors.valor" class="error-message">{{ formErrors.valor }}</span>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" v-model="membresia.descripcion"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="duracion_dias">Duración (Días):</label>
+        <input type="number" id="duracion_dias" v-model.number="membresia.duracion_dias" min="1">
+      </div>
+
+      <div class="form-group">
+        <label for="visitas_maximas_diarias">Visitas Máximas Diarias:</label>
+        <input type="number" id="visitas_maximas_diarias" v-model.number="membresia.visitas_maximas_diarias" min="0">
+      </div>
+
+      <!-- Campo de selección de Áreas de Acceso -->
+      <div class="form-group full-width access-areas-group">
+        <label>Áreas de Acceso:</label>
+        <div v-if="loadingAreas" class="loading-areas">Cargando áreas disponibles...</div>
+        <div v-else-if="areasError" class="error-message">Error al cargar áreas: {{ areasError }}</div>
+        <div v-else-if="allAvailableAreas.length > 0" class="areas-checkbox-grid">
+          <label v-for="area in allAvailableAreas" :key="area.id_area" class="checkbox-item">
+            <input type="checkbox" :value="area.nombre_area" v-model="selectedAreas">
+            {{ area.nombre_area }}
+          </label>
+        </div>
+        <p v-else class="no-areas-message">No hay áreas de acceso disponibles. Configúralas en el backend.</p>
+      </div>
+
+      <!-- Campo de búsqueda y selección de Combo/Ensamblado Incluido -->
+      <div class="form-group">
+        <label for="productoSearch">ID Combo/Ensamblado Incluido:</label>
+        <input
+          type="text"
+          id="productoSearch"
+          v-model="productoSearchText"
+          @input="searchProducts"
+          @keydown.up.prevent="navigateResults('product', -1)"
+          @keydown.down.prevent="navigateResults('product', 1)"
+          @keydown.enter.prevent="selectHighlighted('product')"
+          placeholder="Buscar producto por código..."
+        >
+        <div v-if="productosFiltered.length > 0 && productoSearchText && !membresia.id_combo_ensamblado_incluido" class="autocomplete-results">
+          <div
+            v-for="(producto, index) in productosFiltered"
+            :key="producto.PdctEnsb_ID"
+            :class="{ 'autocomplete-item': true, 'active': index === activeProductIndex }"
+            @click="selectProduct(producto)"
+          >
+            {{ producto.PdctEnsb_codigoEnsamble }} (ID: {{ producto.PdctEnsb_ID }})
+          </div>
+        </div>
+        <p v-if="membresia.id_combo_ensamblado_incluido && selectedProductName" class="selected-info">
+          Producto Seleccionado: <strong>{{ selectedProductName }}</strong> (ID: {{ membresia.id_combo_ensamblado_incluido }})
+          <button type="button" @click="clearProductSelection" class="clear-selection-btn">x</button>
+        </p>
+      </div>
+
+
+      <div class="form-group">
+        <label for="cantidad_combo_incluido">Cantidad Combo Incluido:</label>
+        <input
+          type="number"
+          id="cantidad_combo_incluido"
+          v-model.number="membresia.cantidad_combo_incluido"
+          min="1"
+          :disabled="!membresia.id_combo_ensamblado_incluido"
+          :class="{ 'disabled-field': !membresia.id_combo_ensamblado_incluido }"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="estado_tipo">Estado del Tipo:</label>
+        <select id="estado_tipo" v-model="membresia.estado_tipo">
+          <option value="ACTIVO">ACTIVO</option>
+          <option value="INACTIVO">INACTIVO</option>
+          <option value="ELIMINADO">ELIMINADO</option>
+        </select>
+        <span v-if="formErrors.estado_tipo" class="error-message">{{ formErrors.estado_tipo }}</span>
+      </div>
+
+      <div class="form-actions full-width">
+        <button type="submit" class="btn-submit" :disabled="loading || loadingAreas || loadingProducts">
+          {{ loading ? 'Guardando...' : (isEditMode ? 'Actualizar Membresía' : 'Crear Membresía') }}
+        </button>
+        <button type="button" @click="cancel" class="btn-cancel">Cancelar</button>
+      </div>
+
+      <p v-if="feedbackMessage" :class="['feedback-message', feedbackType]">{{ feedbackMessage }}</p>
+    </form>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+// Define the base URL of the external API using a Vue CLI environment variable
+const API_BASE_URL = process.env.VUE_APP_URL_SERVIDOR_API || 'https://app.factura-e.net'; // Fallback
+
+export default {
+  name: 'CRUD_MembresiaForm',
+  props: {
+    id: { // The ID of the membership type if in edit mode
+      type: [String, Number],
+      default: null
+    }
+  },
+  data() {
+    return {
+      membresia: {
+        id_tipo_membresia: null,
+        nombre_tipo: '',
+        categoria_membresia: '',
+        es_grupal: false,
+        capacidad_maxima_miembros: 1,
+        valor: 0.00,
+        descripcion: '',
+        duracion_dias: null,
+        visitas_maximas_diarias: null,
+        areas_de_acceso: '', // This will be handled internally as a CSV string
+        id_combo_ensamblado_incluido: null,
+        cantidad_combo_incluido: 1,
+        estado_tipo: 'ACTIVO',
+      },
+      allAvailableAreas: [], // Master list of all areas from the DB
+      selectedAreas: [],     // Array of selected area names (for checkboxes)
+
+      allAvailableProducts: [], // Master list of all assembled products from the DB
+      productosFiltered: [],    // Filtered products for the autocomplete search
+      productoSearchText: '',
+      selectedProductName: '',  // To display the selected product's name
+
+      loading: false,
+      loadingAreas: true,
+      loadingProducts: true, // New loading state for products
+      isEditMode: false,
+      feedbackMessage: '',
+      feedbackType: '',
+      formErrors: {},
+      areasError: null,
+      productsError: null, // New error state for products
+
+      activeProductIndex: -1, // Index of the currently highlighted product in autocomplete
+    };
+  },
+  watch: {
+    // Watch the route ID to determine mode (create/edit)
+    '$route.params.id': {
+      immediate: true,
+      handler(newId) {
+        this.isEditMode = !!newId;
+        if (this.isEditMode) {
+          this.membresia.id_tipo_membresia = newId;
+          this.fetchMembresia(newId);
+        } else {
+          this.resetForm();
+        }
       }
     },
-    watch: {
-      'tipoMembresia.es_grupal'(newVal) {
-        // Si cambia a individual, la capacidad debe ser 1
-        if (!newVal) {
-          this.tipoMembresia.capacidad_maxima_miembros = 1;
-        }
-      },
-      // Observar cambios en la ruta para recargar datos si el ID cambia (útil si navegas de editar X a editar Y)
-      '$route.params.id': {
-        immediate: true, // Ejecutar inmediatamente en la creación
-        handler(newId) {
-          if (newId) {
-            this.cargarDatosMembresia(newId);
-          } else {
-            // Si no hay ID en la ruta (modo creación), resetea el formulario
-            this.resetFormulario();
-          }
-        }
+    // Watch 'es_grupal' to disable 'capacidad_maxima_miembros'
+    'membresia.es_grupal'(newValue) {
+      if (!newValue) {
+        this.membresia.capacidad_maxima_miembros = 1; // Reset to 1 if not group
       }
     },
-    created() {
-      this.cargarCombosDisponibles();
-      // La carga de datos de membresía ahora se maneja en el watcher de $route.params.id
-    },
-    methods: {
-      async cargarCombosDisponibles() {
-        try {
-          const response = await axios.get('https://app.factura-e.net/api/productos-ensamblados'); 
-          this.combosDisponibles = response.data;
-        } catch (err) {
-          console.error('Error al cargar combos ensamblados:', err);
-          this.error = 'No se pudieron cargar los combos de productos. Por favor, recargue la página.';
-        }
-      },
-  
-      async cargarDatosMembresia(id) {
-          this.mensaje = '';
-          this.error = '';
-          try {
-              const response = await axios.get(`https://app.factura-e.net/api/tipos-membresia/${id}`);
-              // Mapea los datos recibidos a tu objeto tipoMembresia
-              this.tipoMembresia = { ...response.data };
-              // Asegura que es_grupal sea booleano, ya que MySQL lo devuelve como 0 o 1
-              this.tipoMembresia.es_grupal = !!this.tipoMembresia.es_grupal;
-  
-              // Asegura que `areas_de_acceso` sea un string, en caso de que venga null
-              if (this.tipoMembresia.areas_de_acceso === null) {
-                  this.tipoMembresia.areas_de_acceso = '';
-              }
-              // Asegura que `id_combo_ensamblado_incluido` y `cantidad_combo_incluido` sean null si no hay combo
-              if (this.tipoMembresia.id_combo_ensamblado_incluido === null) {
-                  this.tipoMembresia.cantidad_combo_incluido = 1; // Resetea la cantidad si no hay combo
-              }
-  
-              console.log("Datos de membresía cargados:", this.tipoMembresia);
-          } catch (err) {
-              console.error('Error al cargar datos de la membresía:', err);
-              if (err.response && err.response.data && err.response.data.mensaje) {
-                  this.error = err.response.data.mensaje;
-              } else {
-                  this.error = 'Error al cargar los datos de la membresía para edición. Intente de nuevo.';
-              }
-              // Opcional: Navegar de vuelta si la membresía no se encuentra
-              // this.$router.push('/crud_membresias'); 
-          }
-      },
-  
-      async guardarTipoMembresia() {
-        this.mensaje = '';
-        this.error = '';
-  
-        // Validación básica
-        if (!this.tipoMembresia.nombre_tipo || this.tipoMembresia.valor === null) {
-          this.error = 'El nombre del tipo de membresía y el valor son obligatorios.';
-          return;
-        }
-        if (this.tipoMembresia.es_grupal && this.tipoMembresia.capacidad_maxima_miembros < 1) {
-          this.error = 'La capacidad máxima de miembros debe ser al menos 1 para membresías grupales.';
-          return;
-        }
-        if (this.tipoMembresia.valor < 0) {
-          this.error = 'El valor de la membresía no puede ser negativo.';
-          return;
-        }
-        if (this.tipoMembresia.duracion_dias !== null && this.tipoMembresia.duracion_dias < 1) {
-          this.error = 'La duración en días debe ser al menos 1 o estar vacía.';
-          return;
-        }
-        if (this.tipoMembresia.visitas_maximas_diarias !== null && this.tipoMembresia.visitas_maximas_diarias < 0) {
-          this.error = 'Las visitas máximas diarias no pueden ser negativas.';
-          return;
-        }
-  
-  
-        // Ajuste para capacidad_maxima_miembros si es individual
-        if (!this.tipoMembresia.es_grupal) {
-          this.tipoMembresia.capacidad_maxima_miembros = 1;
-        }
-        
-        // Ajuste para id_combo_ensamblado_incluido y cantidad_combo_incluido
-        if (!this.tipoMembresia.id_combo_ensamblado_incluido) {
-          this.tipoMembresia.cantidad_combo_incluido = null; // No hay combo, no hay cantidad
-        } else if (this.tipoMembresia.cantidad_combo_incluido === null || this.tipoMembresia.cantidad_combo_incluido <= 0) {
-          this.tipoMembresia.cantidad_combo_incluido = 1; // Si se selecciona un combo, asegura al menos 1 unidad
-        }
-  
-        // Prepara los datos a enviar
-        const dataToSend = { ...this.tipoMembresia };
-        // El backend esperaría un valor booleano o numérico para `es_grupal` (0 o 1)
-        dataToSend.es_grupal = dataToSend.es_grupal ? 1 : 0; 
-        
-        let url = 'https://app.factura-e.net/api/tipos-membresia';
-        let method = 'post';
-  
-        if (this.isEditing) {
-          url = `${url}/${this.tipoMembresia.id_tipo_membresia}`;
-          method = 'put';
-        }
-  
-        try {
-          const response = await axios({
-            method: method,
-            url: url,
-            data: dataToSend
-          });
-          
-          this.mensaje = response.data.mensaje || 'Operación realizada exitosamente.';
-          this.error = ''; // Limpiar errores previos
-  
-          // Si fue creación, resetea el formulario después de éxito
-          if (!this.isEditing) {
-            this.resetFormulario();
-          } else {
-              // Si fue edición, podrías querer navegar a la vista de detalles o listado
-              // o simplemente mantener el formulario abierto para más ediciones.
-              // Por ahora, solo se muestra el mensaje de éxito.
-          }
-  
-        } catch (err) {
-          console.error(`Error al ${this.isEditing ? 'actualizar' : 'crear'} el tipo de membresía:`, err);
-          if (err.response && err.response.data && err.response.data.mensaje) {
-            this.error = err.response.data.mensaje;
-          } else {
-            this.error = `Error al ${this.isEditing ? 'actualizar' : 'crear'} el tipo de membresía. Intente de nuevo.`;
-          }
-          this.mensaje = ''; // Limpiar mensajes de éxito previos
-        }
-      },
-  
-      resetFormulario() {
-        this.tipoMembresia = {
-          id_tipo_membresia: null, // Importante resetear el ID para que vuelva a modo creación
-          nombre_tipo: '',
-          categoria_membresia: '',
-          es_grupal: false,
-          capacidad_maxima_miembros: 1,
-          valor: null,
-          descripcion: '',
-          duracion_dias: null,
-          visitas_maximas_diarias: null,
-          areas_de_acceso: '',
-          id_combo_ensamblado_incluido: null,
-          cantidad_combo_incluido: 1,
-          estado_tipo: 'ACTIVO'
+    // Watch 'id_combo_ensamblado_incluido' to disable 'cantidad_combo_incluido'
+    'membresia.id_combo_ensamblado_incluido'(newValue) {
+      if (!newValue) {
+        this.membresia.cantidad_combo_incluido = 1; // Reset to 1 if no product selected
+      }
+    }
+  },
+  async created() {
+    // Load all available areas and products when the component is created
+    await Promise.all([
+      this.fetchAllAvailableAreas(),
+      this.fetchAllAvailableProducts()
+    ]);
+  },
+  methods: {
+    /**
+     * @description Loads existing membership type data for editing.
+     * @param {number} id - ID of the membership type.
+     */
+    async fetchMembresia(id) {
+      this.loading = true;
+      this.feedbackMessage = '';
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/tipos-membresia/${id}`);
+        const data = response.data;
+
+        // Assign data to membership, converting booleans and numbers if necessary
+        this.membresia = {
+          ...data,
+          es_grupal: data.es_grupal === 1 || data.es_grupal === true, // Convert TINYINT(1) to boolean
+          capacidad_maxima_miembros: data.capacidad_maxima_miembros !== null ? Number(data.capacidad_maxima_miembros) : 1,
+          valor: data.valor !== null ? Number(data.valor) : 0.00,
+          duracion_dias: data.duracion_dias !== null ? Number(data.duracion_dias) : null,
+          visitas_maximas_diarias: data.visitas_maximas_diarias !== null ? Number(data.visitas_maximas_diarias) : null,
+          id_combo_ensamblado_incluido: data.id_combo_ensamblado_incluido !== null ? Number(data.id_combo_ensamblado_incluido) : null,
+          cantidad_combo_incluido: data.cantidad_combo_incluido !== null ? Number(data.cantidad_combo_incluido) : 1,
         };
-        this.mensaje = '';
-        this.error = '';
-      },
-      volverAtras() {
-        this.$router.go(-1);
-      },
-      formatValue(valor) {
-        // Manejar valores nulos o indefinidos para evitar errores
-        const numericValue = parseFloat(valor);
-        if (isNaN(numericValue)) {
-          return 'N/A'; // O cualquier otro valor por defecto que prefieras
+
+        // Convert the comma-separated area string to an array for checkboxes
+        this.selectedAreas = data.areas_de_acceso ? data.areas_de_acceso.split(',').map(area => area.trim()) : [];
+
+        // For assembled product, populate search text and selected name
+        if (data.id_combo_ensamblado_incluido) {
+          const foundProduct = this.allAvailableProducts.find(p => p.PdctEnsb_ID === data.id_combo_ensamblado_incluido);
+          if (foundProduct) {
+            this.productoSearchText = foundProduct.PdctEnsb_codigoEnsamble;
+            this.selectedProductName = foundProduct.PdctEnsb_codigoEnsamble;
+          }
         }
-        return numericValue.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      } catch (error) {
+        console.error('Error loading membership type:', error);
+        this.feedbackMessage = 'Error loading membership type data.';
+        this.feedbackType = 'error';
+        this.$router.push('/crud_membresias'); // Redirect to list if error occurs
+      } finally {
+        this.loading = false;
       }
+    },
+
+    /**
+     * @description Loads the master list of all available access areas.
+     */
+    async fetchAllAvailableAreas() {
+      this.loadingAreas = true;
+      this.areasError = null;
+      try {
+        // Call the new endpoint to list configuration areas
+        const response = await axios.get(`${API_BASE_URL}/api/areas`);
+        this.allAvailableAreas = response.data;
+      } catch (error) {
+        console.error('Error loading master list of areas:', error);
+        // Replace optional chaining with a compatible check for ES5/ES6
+        this.areasError = (error.response && error.response.data && error.response.data.mensaje) ? error.response.data.mensaje : 'Unknown error loading areas.';
+        this.feedbackMessage = 'Could not load available areas.';
+        this.feedbackType = 'error';
+      } finally {
+        this.loadingAreas = false;
+      }
+    },
+
+    /**
+     * @description Loads the master list of all available assembled products.
+     */
+    async fetchAllAvailableProducts() {
+      this.loadingProducts = true;
+      this.productsError = null;
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/productos-ensamblados`);
+        this.allAvailableProducts = response.data;
+      } catch (error) {
+        console.error('Error loading assembled products:', error);
+        this.productsError = (error.response && error.response.data && error.response.data.mensaje) ? error.response.data.mensaje : 'Unknown error loading products.';
+        this.feedbackMessage = 'Could not load assembled products.';
+        this.feedbackType = 'error';
+      } finally {
+        this.loadingProducts = false;
+      }
+    },
+
+    /**
+     * @description Performs a local search of assembled products (filtering preloaded ones).
+     */
+    searchProducts() {
+        this.activeProductIndex = -1; // Reset active index on new search input
+        // Clear previous selection if user starts typing again
+        if (this.membresia.id_combo_ensamblado_incluido && this.productoSearchText !== this.selectedProductName) {
+            this.membresia.id_combo_ensamblado_incluido = null;
+            this.selectedProductName = '';
+        }
+        if (this.productoSearchText.length > 1) { // Search from 2 characters
+            const lowerCaseSearch = this.productoSearchText.toLowerCase();
+            this.productosFiltered = this.allAvailableProducts.filter(product =>
+                (product.PdctEnsb_codigoEnsamble && product.PdctEnsb_codigoEnsamble.toLowerCase().includes(lowerCaseSearch)) ||
+                (product.PdctEnsb_codigoProducto && product.PdctEnsb_codigoProducto.toLowerCase().includes(lowerCaseSearch)) // Also search by PdctEnsb_codigoProducto if relevant
+            ).slice(0, 10); // Limit results
+        } else {
+            this.productosFiltered = []; // Clear results if text is too short
+        }
+    },
+
+    /**
+     * @description Selects a product from the search results.
+     * @param {Object} product - Selected product object.
+     */
+    selectProduct(product) {
+        this.membresia.id_combo_ensamblado_incluido = product.PdctEnsb_ID;
+        this.productoSearchText = product.PdctEnsb_codigoEnsamble;
+        this.selectedProductName = product.PdctEnsb_codigoEnsamble;
+        this.productosFiltered = []; // Hide results after selection
+        this.activeProductIndex = -1; // Reset active index
+    },
+
+    /**
+     * @description Clears the current product selection.
+     */
+    clearProductSelection() {
+      this.membresia.id_combo_ensamblado_incluido = null;
+      this.membresia.cantidad_combo_incluido = 1; // Reset quantity when clearing product
+      this.productoSearchText = '';
+      this.selectedProductName = '';
+      this.productosFiltered = [];
+      this.activeProductIndex = -1;
+    },
+
+    /**
+     * @description Navigates autocomplete results using arrow keys.
+     * @param {string} type - 'product' for product search.
+     * @param {number} direction - 1 for down, -1 for up.
+     */
+    navigateResults(type, direction) {
+      let activeIndexProp;
+      let filteredList;
+
+      if (type === 'product') {
+        activeIndexProp = 'activeProductIndex';
+        filteredList = this.productosFiltered;
+      } else {
+        return; // No other types supported here for keyboard navigation yet
+      }
+
+      if (!filteredList.length) return;
+
+      this[activeIndexProp] += direction;
+
+      // Wrap around logic
+      if (this[activeIndexProp] < 0) {
+        this[activeIndexProp] = filteredList.length - 1;
+      } else if (this[activeIndexProp] >= filteredList.length) {
+        this[activeIndexProp] = 0;
+      }
+    },
+
+    /**
+     * @description Selects the currently highlighted item in autocomplete.
+     * @param {string} type - 'product' for product search.
+     */
+    selectHighlighted(type) {
+      let activeIndexProp;
+      let filteredList;
+
+      if (type === 'product') {
+        activeIndexProp = 'activeProductIndex';
+        filteredList = this.productosFiltered;
+      } else {
+        return;
+      }
+
+      if (this[activeIndexProp] > -1 && filteredList[this[activeIndexProp]]) {
+        if (type === 'product') {
+          this.selectProduct(filteredList[this[activeIndexProp]]);
+        }
+      }
+    },
+
+    /**
+     * @description Validates form fields before submission.
+     * @returns {boolean} True if the form is valid, false otherwise.
+     */
+    validateForm() {
+      this.formErrors = {};
+      let isValid = true;
+
+      if (!this.membresia.nombre_tipo) {
+        this.formErrors.nombre_tipo = 'El nombre del tipo de membresía es obligatorio.';
+        isValid = false;
+      }
+      if (this.membresia.es_grupal === undefined) {
+        this.formErrors.es_grupal = 'Debe especificar si la membresía es grupal.';
+        isValid = false;
+      }
+      if (this.membresia.valor === undefined || this.membresia.valor < 0) {
+        this.formErrors.valor = 'El valor es obligatorio y debe ser mayor o igual a 0.';
+        isValid = false;
+      }
+      if (!this.membresia.estado_tipo) {
+        this.formErrors.estado_tipo = 'El estado del tipo es obligatorio.';
+        isValid = false;
+      }
+      // If group membership is true, capacity should be > 1
+      if (this.membresia.es_grupal && (this.membresia.capacidad_maxima_miembros === null || this.membresia.capacidad_maxima_miembros <= 1)) {
+        this.formErrors.capacidad_maxima_miembros = 'La capacidad debe ser mayor a 1 para membresías grupales.';
+        isValid = false;
+      }
+      // If a combo is included, quantity must be > 0
+      if (this.membresia.id_combo_ensamblado_incluido && (this.membresia.cantidad_combo_incluido === null || this.membresia.cantidad_combo_incluido <= 0)) {
+        this.formErrors.cantidad_combo_incluido = 'La cantidad del combo debe ser mayor a 0.';
+        isValid = false;
+      }
+
+
+      return isValid;
+    },
+
+    /**
+     * @description Submits the form to create or update a membership type.
+     */
+    async submitForm() {
+      if (!this.validateForm()) {
+        this.feedbackMessage = 'Por favor, corrige los errores del formulario.';
+        this.feedbackType = 'error';
+        return;
+      }
+
+      this.loading = true;
+      this.feedbackMessage = '';
+      this.feedbackType = '';
+
+      // Create a copy of the object to send, adjusting types and fields
+      const dataToSend = { ...this.membresia };
+
+      // Convert array of selected areas to a CSV string
+      dataToSend.areas_de_acceso = this.selectedAreas.join(',');
+
+      // Ensure numeric fields are null if empty or non-numeric
+      dataToSend.capacidad_maxima_miembros = dataToSend.capacidad_maxima_miembros || (dataToSend.es_grupal ? 1 : null); // If not group, can be null
+      dataToSend.duracion_dias = dataToSend.duracion_dias || null;
+      dataToSend.visitas_maximas_diarias = dataToSend.visitas_maximas_diarias || null;
+      dataToSend.id_combo_ensamblado_incluido = dataToSend.id_combo_ensamblado_incluido || null;
+      dataToSend.cantidad_combo_incluido = dataToSend.cantidad_combo_incluido || (dataToSend.id_combo_ensamblado_incluido ? 1 : null); // If combo exists, default to 1
+
+
+      dataToSend.es_grupal = dataToSend.es_grupal ? 1 : 0; // Convert boolean to 0/1 for MySQL TINYINT(1)
+
+
+      try {
+        let response;
+        if (this.isEditMode) {
+          response = await axios.put(`${API_BASE_URL}/api/tipos-membresia/${this.membresia.id_tipo_membresia}`, dataToSend);
+        } else {
+          response = await axios.post(`${API_BASE_URL}/api/tipos-membresia`, dataToSend);
+        }
+        this.feedbackMessage = response.data.mensaje || 'Operación exitosa.';
+        this.feedbackType = 'success';
+
+        setTimeout(() => {
+          this.$router.push('/crud_membresias'); // Redirect to membership types list
+        }, 2000);
+      } catch (error) {
+        console.error('Error saving membership type:', error);
+        this.feedbackMessage = error.response && error.response.data && error.response.data.mensaje
+          ? `Error: ${error.response.data.mensaje}`
+          : `Error saving membership type: ${error.message}. Please try again.`;
+        this.feedbackType = 'error';
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /**
+     * @description Resets the form to its initial state.
+     */
+    resetForm() {
+      this.membresia = {
+        id_tipo_membresia: null,
+        nombre_tipo: '',
+        categoria_membresia: '',
+        es_grupal: false,
+        capacidad_maxima_miembros: 1,
+        valor: 0.00,
+        descripcion: '',
+        duracion_dias: null,
+        visitas_maximas_diarias: null,
+        areas_de_acceso: '',
+        id_combo_ensamblado_incluido: null,
+        cantidad_combo_incluido: 1,
+        estado_tipo: 'ACTIVO',
+      };
+      this.selectedAreas = [];
+      this.allAvailableProducts = []; // Clear products on reset
+      this.productoSearchText = '';
+      this.selectedProductName = '';
+      this.productosFiltered = [];
+      this.formErrors = {};
+      this.feedbackMessage = '';
+      this.feedbackType = '';
+      this.activeProductIndex = -1;
+    },
+
+    /**
+     * @description Cancels the operation and returns to the membership types list.
+     */
+    cancel() {
+      this.$router.push('/crud_membresias');
     }
-  };
-  </script>
-  
-  <style scoped>
-  /* TU CSS ORIGINAL SE MANTIENE ÍNTEGRO AQUÍ */
-  .form-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
-  
-  .form-card {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+};
+</script>
+
+<style scoped>
+.membresia-form-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.title {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 15px;
+}
+
+.divider {
+  border: 0;
+  height: 2px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #3498db, rgba(0, 0, 0, 0));
+  margin-bottom: 30px;
+}
+
+.membresia-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative; /* For autocomplete */
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  outline: none;
+}
+
+.form-group input.disabled-field {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.radio-group div {
+  display: flex;
+  gap: 20px;
+  margin-top: 5px;
+}
+
+.radio-group label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.radio-group input[type="radio"] {
+  transform: scale(1.1);
+}
+
+/* Access Areas Checkbox Grid */
+.access-areas-group {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+.access-areas-group label {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.areas-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #444;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.checkbox-item:hover {
+  background-color: #eef;
+}
+
+.checkbox-item input[type="checkbox"] {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.loading-areas, .no-areas-message {
+  text-align: center;
+  color: #777;
+  padding: 10px;
+}
+
+/* Autocomplete styles (for products) */
+.autocomplete-results {
+  position: absolute;
+  top: calc(100% + 5px); /* Position below the input with a small margin */
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.autocomplete-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active { /* Style for highlighted item */
+  background-color: #f0f0f0;
+}
+
+.selected-info {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #eaf6ff;
+  border-left: 4px solid #3498db;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear-selection-btn {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-weight: bold;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.clear-selection-btn:hover {
+  color: #e74c3c;
+}
+
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.btn-submit {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+}
+
+.btn-submit:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+.feedback-message {
+  grid-column: 1 / -1;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.feedback-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.feedback-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .membresia-form {
+    grid-template-columns: 1fr;
   }
-  
-  /* Header */
-  .form-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2.5rem 2rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+  .form-group.full-width {
+    grid-column: auto; /* Allow full-width elements to collapse to single column */
   }
-  
-  .form-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: shimmer 3s ease-in-out infinite;
-  }
-  
-  @keyframes shimmer {
-    0%, 100% { transform: translateX(-20px) translateY(-20px); }
-    50% { transform: translateX(20px) translateY(20px); }
-  }
-  
-  .header-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px);
-  }
-  
-  .header-icon svg {
-    width: 30px;
-    height: 30px;
-    stroke-width: 2;
-  }
-  
-  .form-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .form-subtitle {
-    margin: 0;
-    opacity: 0.9;
-    font-size: 1.1rem;
-  }
-  
-  /* Form */
-  .member-form {
-    padding: 2rem;
-  }
-  
-  .form-section {
-    margin-bottom: 2.5rem;
-  }
-  
-  .section-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-  }
-  
-  .section-title::before {
-    content: '';
-    width: 4px;
-    height: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 2px;
-    margin-right: 0.75rem;
-  }
-  
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-label {
-    display: flex;
-    align-items: center;
-    font-weight: 600;
-    color: #4a5568;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-  }
-  
-  .label-icon {
-    width: 18px;
-    height: 18px;
-    margin-right: 0.5rem;
-    stroke-width: 2;
-    color: #667eea;
-  }
-  
-  .form-input, .form-select {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: white;
-    box-sizing: border-box;
-  }
-  
-  .form-input:focus, .form-select:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    transform: translateY(-1px);
-  }
-  
-  .form-input::placeholder {
-    color: #a0aec0;
-  }
-  
-  .form-select {
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.75rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
-    appearance: none;
-  }
-  
-  /* Actions */
   .form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  .action-buttons {
-    display: flex;
-    gap: 1rem;
+  .btn-submit, .btn-cancel {
+    width: 100%;
   }
-  
-  .btn-primary, .btn-secondary, .btn-back {
-    padding: 0.875rem 1.5rem;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    min-width: 140px;
-    justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .areas-checkbox-grid {
+    grid-template-columns: 1fr; /* One column for areas on very small mobiles */
   }
-  
-  .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  }
-  
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-  }
-  
-  .btn-secondary {
-    background: #f7fafc;
-    color: #4a5568;
-    border: 2px solid #e2e8f0;
-  }
-  
-  .btn-secondary:hover {
-    background: #edf2f7;
-    border-color: #cbd5e0;
-    transform: translateY(-1px);
-  }
-  
-  .btn-back {
-    background: #ffffff;
-    color: #6b7280;
-    border: 2px solid #d1d5db;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .btn-back:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .btn-icon {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2;
-  }
-  
-  /* Alerts */
-  .alert {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 1rem 1.5rem;
-    margin: 1.5rem 2rem 0;
-    border-radius: 12px;
-    border-left: 4px solid;
-    animation: slideIn 0.3s ease-out;
-  }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .alert-success {
-    background: #f0fff4;
-    border-left-color: #48bb78;
-    color: #22543d;
-  }
-  
-  .alert-error {
-    background: #fff5f5;
-    border-left-color: #f56565;
-    color: #742a2a;
-  }
-  
-  .alert-icon {
-    width: 20px;
-    height: 20px;
-    stroke-width: 2;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  
-  .alert-content strong {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-  
-  .alert-content p {
-    margin: 0;
-    font-size: 0.95rem;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .form-container {
-      padding: 1rem;
-    }
-    
-    .form-header {
-      padding: 2rem 1.5rem;
-    }
-    
-    .form-title {
-      font-size: 1.75rem;
-    }
-    
-    .member-form {
-      padding: 1.5rem;
-    }
-    
-    .form-row {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-    
-    .form-actions {
-      flex-direction: column;
-      gap: 1rem;
-    }
-    
-    .action-buttons {
-      width: 100%;
-      flex-direction: column-reverse;
-    }
-    
-    .btn-primary, .btn-secondary, .btn-back {
-      width: 100%;
-    }
-    
-    .alert {
-      margin: 1.5rem 1rem 0;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .form-header {
-      padding: 1.5rem 1rem;
-    }
-    
-    .form-title {
-      font-size: 1.5rem;
-    }
-    
-    .member-form {
-      padding: 1rem;
-    }
-  }
-  </style>
+}
+</style>
