@@ -19,7 +19,7 @@
           type="text"
           id="clienteSearch"
           v-model="clienteSearchText"
-          @input="searchClientes"
+          @input="debouncedSearchClientes"
           @keydown.up.prevent="navigateResults('cliente', -1)"
           @keydown.down.prevent="navigateResults('cliente', 1)"
           @keydown.enter.prevent="selectHighlighted('cliente')"
@@ -50,7 +50,7 @@
           type="text"
           id="tipoMembresiaSearch"
           v-model="tipoMembresiaSearchText"
-          @input="searchTiposMembresia"
+          @input="debouncedSearchTiposMembresia"
           @keydown.up.prevent="navigateResults('membresia', -1)"
           @keydown.down.prevent="navigateResults('membresia', 1)"
           @keydown.enter.prevent="selectHighlighted('membresia')"
@@ -164,6 +164,10 @@ export default {
 
       activeClientIndex: -1, // Index of the currently highlighted client in autocomplete
       activeMembresiaIndex: -1, // Index of the currently highlighted membership type in autocomplete
+
+      // Debounce timers
+      searchClientDebounce: null,
+      searchMembresiaDebounce: null,
     };
   },
   watch: {
@@ -234,6 +238,17 @@ export default {
         this.loading = false;
       }
     },
+
+    /**
+     * @description Debounces the client search to avoid excessive API calls.
+     */
+    debouncedSearchClientes() {
+      clearTimeout(this.searchClientDebounce);
+      this.searchClientDebounce = setTimeout(() => {
+        this.searchClientes();
+      }, 300); // Wait 300ms after user stops typing
+    },
+
 
     /**
      * @description Performs a client search using the external API.
@@ -308,6 +323,16 @@ export default {
             this.feedbackMessage = 'Could not load membership types for search.';
             this.feedbackType = 'error';
         }
+    },
+
+    /**
+     * @description Debounces the membership type search.
+     */
+    debouncedSearchTiposMembresia() {
+      clearTimeout(this.searchMembresiaDebounce);
+      this.searchMembresiaDebounce = setTimeout(() => {
+        this.searchTiposMembresia();
+      }, 300); // Local search can also be debounced for better UX
     },
 
     /**
@@ -555,6 +580,8 @@ export default {
       this.feedbackType = '';
       this.activeClientIndex = -1;
       this.activeMembresiaIndex = -1;
+      clearTimeout(this.searchClientDebounce);
+      clearTimeout(this.searchMembresiaDebounce);
     },
 
     /**

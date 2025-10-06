@@ -15,6 +15,18 @@
             </button>
         </div>
 
+        <!-- Search Bar -->
+        <div class="search-bar-container">
+            <input 
+                type="text" 
+                v-model="searchQuery" 
+                placeholder="Buscar miembro por nombre, matrícula o RUC/cédula..."
+                class="search-input"
+            >
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number">{{ miembros.length }}</div>
@@ -31,7 +43,7 @@
         </div>
 
         <div class="cards-container">
-            <div v-if="miembros.length > 0" class="member-cards-grid">
+            <div v-if="filteredMiembros.length > 0" class="member-cards-grid">
                 <div class="member-card create-new-card" @click="crearNuevoMiembro">
                     <div class="create-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -43,7 +55,7 @@
                     <p class="create-text">Crear Nuevo Miembro</p>
                 </div>
 
-                <div v-for="miembro in miembros" :key="miembro.id_miembro" class="member-card">
+                <div v-for="miembro in filteredMiembros" :key="miembro.id_miembro" class="member-card">
                     <div class="card-header">
                         <div class="member-avatar">{{ getInitials(miembro.client_nombre) }}</div>
                         <div class="card-title-group">
@@ -144,7 +156,8 @@ export default {
     name: 'CrudMiembros',
     data() {
         return {
-            miembros: []
+            miembros: [],
+            searchQuery: '' // Para almacenar el texto de búsqueda
         };
     },
     computed: {
@@ -160,7 +173,22 @@ export default {
                 (m.estado === 'ACTIVO' && new Date(m.fecha_fin) < now)
             ).length;
         }
-        // Puedes añadir más computed properties para otras estadísticas
+        ,
+        /**
+         * @description Filtra los miembros basándose en el searchQuery.
+         * La búsqueda no distingue mayúsculas/minúsculas y busca en nombre, matrícula y RUC/cédula.
+         */
+        filteredMiembros() {
+            if (!this.searchQuery) {
+                return this.miembros;
+            }
+            const lowerCaseQuery = this.searchQuery.toLowerCase();
+            return this.miembros.filter(miembro =>
+                (miembro.client_nombre && miembro.client_nombre.toLowerCase().includes(lowerCaseQuery)) ||
+                (miembro.matricula && miembro.matricula.toString().toLowerCase().includes(lowerCaseQuery)) ||
+                (miembro.client_rucCed && miembro.client_rucCed.toLowerCase().includes(lowerCaseQuery))
+            );
+        }
     },
     created() {
         this.cargarMiembros();
@@ -335,6 +363,39 @@ export default {
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+/* Search Bar Styles */
+.search-bar-container {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem; /* Espacio para el ícono */
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 1rem;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: #a0aec0;
 }
 
 /* Stats Grid */
