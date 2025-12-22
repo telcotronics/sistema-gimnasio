@@ -7,8 +7,7 @@ const MESES = ["Enero" ,"Febrero" ,"Marzo" ,"Abril" ,"Mayo" ,"Junio" ,"Julio" ,"
 
 const Utiles = {
     generarURL(imagen) {
-        //return RUTA_IMAGEN + imagen
-        return "@/assets/logo_gim.jpg";
+        return RUTA_IMAGEN + imagen
     },
 
     obtenerClaves(array){

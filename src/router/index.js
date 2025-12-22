@@ -4,7 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Membresias from '../components/Membresias/Membresias'
 import CrearMembresia from '../components/Membresias/Crear_membresias'
 import CrearPlanes from '../components/Membresias/Crear_planes.vue'
-import Miembros from '../components/Miembros/Miembros'
+//import Miembros from '../components/Miembros/Miembros'
 import CRUD_membresias from '../components/Membresias/Crud_membresias.vue'
 import CRUD_MembresiaForm from '../components/Membresias/CRUD_MembresiaForm.vue'
 import CRUD_MembresiaCARD from '../components/Membresias/Crud_membresias_card.vue'
@@ -32,6 +32,11 @@ import InicioComponent from '../components/InicioComponent'
 import MiPerfil from '../components/Usuarios/MiPerfil'
 import Chat from '../components/Chat/Chat_ws'
 import Envia_msg from '../components/Chat/Envia_msg.vue'
+import EstadosMiembros from '../components/Estados/EstadosMiembros.vue'
+import EstadoCajas from '../components/Estados/EstadoCajas_listar.vue'
+import CajaApertura from '../components/cajas/AperturaCaja.vue'
+
+import caja_cuadre from '../components/cajas/caja_cuadre.vue'
 
 Vue.use(Router)
 
@@ -98,11 +103,11 @@ export default new Router({
       name: 'AdminAreas',
       component: CRUD_Areas
     },
-    {
+    /*{
       path: '/miembros',
       name: 'Miembros',
       component: Miembros
-    },
+    },*/
     {
       path: '/nuevo-miembro',
       name: 'NuevoMiembro',
@@ -159,6 +164,11 @@ export default new Router({
       component: Cobros
     },
     {
+      path: '/caja_cuadre',
+      name: 'caja_cuadre',
+      component: caja_cuadre
+    },
+    {
       path: '/registrar-visita',
       name: 'RegistrarVisita',
       component: RegistrarVisita
@@ -193,5 +203,21 @@ export default new Router({
       name: 'MiPerfil',
       component: MiPerfil
     },
+
+    {
+      path: '/estado_miembros',
+      name: 'Estado Miembros',
+      component: EstadosMiembros
+    },
+    {
+      path: '/estado_cajas',
+      name: 'Estado Cajas',
+      component: EstadoCajas
+    },
+    {
+      path: '/caja_apertura',
+      name: 'Aperturar Caja',
+      component: CajaApertura
+    }
   ]
 })

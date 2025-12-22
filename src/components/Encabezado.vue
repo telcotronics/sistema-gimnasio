@@ -119,6 +119,12 @@ export default {
       { title: "Configurar", icon: "mdi-cog", link: "/configurar" },
       { title: "Configurar Areas", icon: "mdi-cog", link: "/admin-areas" },
       { title: "Mi perfil", icon: "mdi-account-key", link: "/perfil" },
+      /*cuadresn de caja*/
+      { title: "Cuadre de Caja", icon: "mdi-cash-register", link: "/caja_cuadre" },
+      { title: "Estados", icon: "mdi-cash-register", link: "/estado_miembros" },
+      { title: "Cajas", icon: "mdi-cash-register", link: "/estado_cajas" },
+      { title: "Caja Apertura", icon: "mdi-cash-register", link: "/caja_apertura" },
+      { title: "Caja Cierre", icon: "mdi-cash-register", link: "/cierre_caja"},
     ],
   }),
 
