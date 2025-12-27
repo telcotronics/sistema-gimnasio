@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+//import HelloWorld from '@/components/HelloWorld'
 import Membresias from '../components/Membresias/Membresias'
 import CrearMembresia from '../components/Membresias/Crear_membresias'
 import CrearPlanes from '../components/Membresias/Crear_planes.vue'
@@ -28,15 +28,17 @@ import RegistrarVisita2 from '../components/Visitas/RegistrarVisita'
 import RegistrarVisita from '../components/Visitas/RegistroVisitaMiembro.vue'
 import Visitas from '../components/Visitas/Visitas'
 import ConfiguracionComponent from '../components/Configuracion/ConfiguracionComponent'
-import InicioComponent from '../components/InicioComponent'
+//import InicioComponent from '../components/InicioComponent'
 import MiPerfil from '../components/Usuarios/MiPerfil'
 import Chat from '../components/Chat/Chat_ws'
 import Envia_msg from '../components/Chat/Envia_msg.vue'
 import EstadosMiembros from '../components/Estados/EstadosMiembros.vue'
 import EstadoCajas from '../components/Estados/EstadoCajas_listar.vue'
 import CajaApertura from '../components/cajas/AperturaCaja.vue'
+import Ventas from '../components/Ventas/genera_venta.vue'
 
 import caja_cuadre from '../components/cajas/caja_cuadre.vue'
+import Inicio_dashboard from '../components/inicio_dashboard.vue'
 
 Vue.use(Router)
 
@@ -45,7 +47,8 @@ export default new Router({
     {
       path: '/',
       name: 'InicioComponent',
-      component: InicioComponent
+      //component: InicioComponent
+      component: Inicio_dashboard
     },
     {
       path: '/membresias',
@@ -218,6 +221,11 @@ export default new Router({
       path: '/caja_apertura',
       name: 'Aperturar Caja',
       component: CajaApertura
+    },
+    {
+      path: '/venta',
+      name: 'Venta y Cobros',
+      component: Ventas
     }
   ]
 })

@@ -85,6 +85,7 @@
           <small>Versión 2.0</small>
         </div>
       </div>
+      
     </v-navigation-drawer>
   </div>
 </template>
@@ -120,11 +121,11 @@ export default {
       { title: "Configurar Areas", icon: "mdi-cog", link: "/admin-areas" },
       { title: "Mi perfil", icon: "mdi-account-key", link: "/perfil" },
       /*cuadresn de caja*/
-      { title: "Cuadre de Caja", icon: "mdi-cash-register", link: "/caja_cuadre" },
       { title: "Estados", icon: "mdi-cash-register", link: "/estado_miembros" },
       { title: "Cajas", icon: "mdi-cash-register", link: "/estado_cajas" },
       { title: "Caja Apertura", icon: "mdi-cash-register", link: "/caja_apertura" },
-      { title: "Caja Cierre", icon: "mdi-cash-register", link: "/cierre_caja"},
+      { title: "Caja Cierre", icon: "mdi-cash-register", link: "/caja_cuadre"},
+      { title: "Venta ", icon: "mdi-cash-register", link: "/venta"},
     ],
   }),
 
@@ -156,7 +157,7 @@ export default {
 <style scoped>
 /* App Bar Styles */
 .app-bar-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #102110 0%, #102210 100%) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -291,7 +292,7 @@ export default {
 }
 
 .nav-item-active {
-  background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+  background: linear-gradient(135deg, rgba(15, 32, 15, 0.3) 0%, rgba(16, 34, 16, 0.3) 100%);
   border-left: 4px solid #667eea;
 }
 
