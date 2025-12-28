@@ -345,11 +345,14 @@ const baseUrl = process.env.VUE_APP_API_URL || 'https://api-gateway-cloud.telcot
 const api_key = process.env.VUE_APP_API_KEY || 'ak_8f58d181cb8ad5042b677cf8a63ca708';
 const baseDat = process.env.VUE_APP_BASE_DAT || 'telcotronics';
 const gp_precio = process.env.VUE_APP_GP_PRECIO || 'PUBLICO';
+const usuario = JSON.parse(localStorage.getItem('usuario'));
 
 
 export default {
   name: 'SalesDocumentForm',
   data() {
+    const currentSeller = localStorage.getItem('nombreUsuario') || 'Usuario';
+
     return {
       busqueda: '',
       itemSearch: '',
@@ -378,10 +381,10 @@ export default {
         creditAmount: 0,
         creditDays: 30,
         payments: [], // Lista de pagos agregados
-        seller: 'Jane Doe',
+        seller: currentSeller,
         observations: '',
         collector: {
-          name: 'Jane Doe',
+          name: currentSeller,
           role: 'Usuario Actual',
           avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBx8EOkGnlRV2JEzhkR7mS4E5sCehlbvgZT3CbwMxIpkDGW8mC1F5fEN92Ja-vmU0dU90oLJz_YXavLRAZ42zZJPRunTh7qrLD5M7rrskc60s4le-8KpFS32brFEwGzz426OZtLsL7n-aCKoBvXEyveJ4fnQQe3C73cS0YrDJI8UGaptoetzkc8WZtMvTcVEH7EOmuRyUvWR-nlsvXbnaAlNrqazyvn0NgEpv6g70gDhDlWmttVjhhqsd6ZZHWiBosLcYyYlVMXMM'
         },
