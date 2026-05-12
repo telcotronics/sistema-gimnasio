@@ -158,36 +158,37 @@
 </template>
 
 <script>
+// TODO TAREA-02: conectar con el endpoint real de la nueva API (app.factura-e.net).
+// La estructura esperada de la respuesta y el mapeo ya están documentados en plan_proyecto.md.
+// El método _mapearHoras y _mapearMeses están listos para usarse cuando se conozca el endpoint.
+
+const MESES_CORTOS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+
 export default {
   name: 'GymDashboard',
   data() {
     return {
       activeNav: 'home',
       activeView: 'Día',
-      userProfile: {
-        name: 'Carlos',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDIdilNKhxxvMh5NH85dpTUB_LEBqo0ICbjHrUK_keRLkGNbnkO_ljv0Z5xfPbqo8zCC_9wZIhCYC5og8H5nE5_r-sQ_lN9VJuSgMcmXjOHh5oa0szZqx0AXt_1opuT8B_2K-EsT0cnmjibnQHiSPipCiWvA27mE8j8A2N5Yc0ilwGh8owaVzlEUr44sqOtifjjtkfLkCH6TIsdk6Xsvk4Plqp8N-XhFQXOV5LUFspFDRwp66aylqq6Y-GrE22ZWl4rjLumG9VLlVMU'
-      },
-      viewOptions: ['Día', 'Sem'],
       peakHour: '18:00 - 19:00',
       memberStats: [
-        { label: 'Visitas Hoy', value: '124', trend: '+5% vs ayer', trendUp: true, icon: 'groups', large: true },
-        { label: 'Total Mes', value: '3.2k', trend: '+12% vs mes ant.', trendUp: true, icon: 'calendar_month', large: true },
-        { label: 'Esta Semana', value: '840', footer: 'Promedio: 120/día' },
-        { label: 'Total Histórico', value: '15.4k', footer: 'Desde Ene 2023' }
+        { label: 'Visitas Hoy',     value: '—', trend: '',             trendUp: true,  icon: 'groups',         large: true },
+        { label: 'Total Mes',       value: '—', trend: '',             trendUp: true,  icon: 'calendar_month', large: true },
+        { label: 'Esta Semana',     value: '—', footer: '' },
+        { label: 'Total Histórico', value: '—', footer: 'Acumulado' }
       ],
       hourlyData: [
-        { time: '6am', percentage: 30, isPeak: false },
-        { time: '9am', percentage: 50, isPeak: false },
+        { time: '6am',  percentage: 30, isPeak: false },
+        { time: '9am',  percentage: 50, isPeak: false },
         { time: '12pm', percentage: 40, isPeak: false },
-        { time: '3pm', percentage: 35, isPeak: false },
-        { time: '6pm', percentage: 90, isPeak: true },
-        { time: '9pm', percentage: 70, isPeak: false }
+        { time: '3pm',  percentage: 35, isPeak: false },
+        { time: '6pm',  percentage: 90, isPeak: true  },
+        { time: '9pm',  percentage: 70, isPeak: false }
       ],
       revenueData: [
-        { label: 'Ingresos Hoy', value: 1250, trend: '+8% vs ayer', positive: true },
-        { label: 'Esta Semana', value: 8400, trend: '-2% vs anterior', positive: false },
-        { label: 'Este Mes', value: 32000, trend: 'Objetivo: 80%', positive: true }
+        { label: 'Ingresos Hoy',  value: 0, trend: '', positive: true },
+        { label: 'Esta Semana',   value: 0, trend: '', positive: true },
+        { label: 'Este Mes',      value: 0, trend: '', positive: true }
       ],
       annualData: [
         { label: 'Ene', percentage: 40, isCurrent: false },
@@ -195,11 +196,12 @@ export default {
         { label: 'Mar', percentage: 45, isCurrent: false },
         { label: 'Abr', percentage: 70, isCurrent: false },
         { label: 'May', percentage: 60, isCurrent: false },
-        { label: 'Jun', percentage: 85, isCurrent: true }
+        { label: 'Jun', percentage: 85, isCurrent: true  }
       ],
+      viewOptions: ['Día', 'Sem'],
       navItems: [
-        { id: 'home', icon: 'home', label: 'Inicio' },
-        { id: 'members', icon: 'groups', label: 'Miembros' },
+        { id: 'home',     icon: 'home',     label: 'Inicio' },
+        { id: 'members',  icon: 'groups',   label: 'Miembros' },
         { id: 'payments', icon: 'payments', label: 'Pagos' },
         { id: 'settings', icon: 'settings', label: 'Ajustes' }
       ]
@@ -207,37 +209,72 @@ export default {
   },
   computed: {
     pointsArray() {
-      const width = 300;
-      const height = 120;
-      const padding = 10;
-      const stepX = (width - padding * 2) / (this.hourlyData.length - 1);
-      
+      const width = 300, height = 120, padding = 10
+      const stepX = (width - padding * 2) / (this.hourlyData.length - 1)
       return this.hourlyData.map((item, index) => ({
         x: padding + index * stepX,
         y: height - padding - (item.percentage / 100) * (height - padding * 2)
-      }));
+      }))
     },
     linePoints() {
-      return this.pointsArray.map(p => `${p.x},${p.y}`).join(' ');
+      return this.pointsArray.map(p => `${p.x},${p.y}`).join(' ')
     },
     areaPoints() {
-      const points = this.pointsArray.map(p => `${p.x},${p.y}`).join(' ');
-      return `${points} 300,120 0,120`;
+      const points = this.pointsArray.map(p => `${p.x},${p.y}`).join(' ')
+      return `${points} 300,120 0,120`
     }
   },
   methods: {
+    // Listo para usar cuando se conozca el endpoint del dashboard en la nueva API.
+    // Recibe la respuesta y actualiza memberStats, hourlyData, annualData y revenueData.
+    aplicarDatos(res) {
+      const v = res.datosVisitas
+      const p = res.datosPagos
+      this.memberStats[0].value = String(v.visitasHoy)
+      this.memberStats[1].value = String(v.visitasMes)
+      this.memberStats[2].value = String(v.visitasSemana)
+      this.memberStats[2].footer = `Promedio: ${Math.round(v.visitasSemana / 7)}/día`
+      this.memberStats[3].value = String(v.totalVisitas)
+      this.revenueData[0].value = Number(p.pagosHoy)
+      this.revenueData[1].value = Number(p.pagosSemana)
+      this.revenueData[2].value = Number(p.pagosMes)
+      this.hourlyData = this._mapearHoras(res.visitasHora || [])
+      this.annualData  = this._mapearMeses(res.pagosMeses || [])
+    },
+
+    _mapearHoras(visitasHora) {
+      if (!visitasHora.length) return this.hourlyData
+      const maxVisitas = Math.max(...visitasHora.map(h => h.numeroVisitas), 1)
+      let peakIdx = 0
+      visitasHora.forEach((h, i) => {
+        if (h.numeroVisitas > visitasHora[peakIdx].numeroVisitas) peakIdx = i
+      })
+      if (visitasHora[peakIdx]) {
+        const h = parseInt(visitasHora[peakIdx].hora)
+        this.peakHour = `${String(h).padStart(2,'0')}:00 - ${String(h+1).padStart(2,'0')}:00`
+      }
+      return visitasHora.map((h, i) => {
+        const hNum = parseInt(h.hora)
+        const label = hNum === 0 ? '12am' : hNum < 12 ? `${hNum}am` : hNum === 12 ? '12pm' : `${hNum-12}pm`
+        return { time: label, percentage: Math.round((h.numeroVisitas / maxVisitas) * 100), isPeak: i === peakIdx }
+      })
+    },
+
+    _mapearMeses(pagosMeses) {
+      if (!pagosMeses.length) return this.annualData
+      const mesActual = new Date().getMonth() + 1
+      const maxTotal = Math.max(...pagosMeses.map(m => Number(m.total)), 1)
+      return pagosMeses.map(m => ({
+        label: MESES_CORTOS[m.mes - 1] || String(m.mes),
+        percentage: Math.round((Number(m.total) / maxTotal) * 100),
+        isCurrent: m.mes === mesActual
+      }))
+    },
+
     formatCurrency(amount) {
-      return `$${amount.toLocaleString()}`;
+      return `$${Number(amount).toLocaleString('es-EC', { minimumFractionDigits: 0 })}`
     },
-    handleNotifications() {
-      console.log('Abrir notificaciones');
-    },
-    handleAddAction() {
-      console.log('Agregar acción');
-    },
-    handleMoreOptions() {
-      console.log('Más opciones');
-    }
+    handleMoreOptions() {}
   }
 };
 </script>

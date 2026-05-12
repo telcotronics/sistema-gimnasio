@@ -7,9 +7,9 @@
       </div>
       <button class="btn-primary" @click="crearTipoMembresia">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="16"/>
-          <line x1="8" y1="12" x2="16" y2="12"/>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
         </svg>
         Nuevo Tipo de Membresía
       </button>
@@ -52,17 +52,20 @@
             </div>
             <div class="card-detail-item">
               <span class="detail-label">Modalidad:</span>
-              <span :class="['detail-value', 'group-tag', tipoMembresia.es_grupal ? 'group-tag-grupal' : 'group-tag-unico']">
+              <span
+                :class="['detail-value', 'group-tag', tipoMembresia.es_grupal ? 'group-tag-grupal' : 'group-tag-unico']">
                 {{ tipoMembresia.es_grupal ? 'Grupal' : 'Único' }}
               </span>
             </div>
             <div class="card-detail-item">
               <span class="detail-label">Capacidad:</span>
-              <span class="detail-value">{{ tipoMembresia.es_grupal ? tipoMembresia.capacidad_maxima_miembros : '1' }}</span>
+              <span class="detail-value">{{ tipoMembresia.es_grupal ? tipoMembresia.capacidad_maxima_miembros : '1'
+                }}</span>
             </div>
             <div class="card-detail-item">
               <span class="detail-label">Duración:</span>
-              <span class="detail-value">{{ tipoMembresia.duracion_dias ? `${tipoMembresia.duracion_dias} días` : 'Duración Variable' }}</span>
+              <span class="detail-value">{{ tipoMembresia.duracion_dias ? `${tipoMembresia.duracion_dias} días` :
+                'Duración Variable' }}</span>
             </div>
             <div class="card-detail-item">
               <span class="detail-label">Valor:</span>
@@ -70,7 +73,8 @@
             </div>
             <div class="card-detail-item" v-if="tipoMembresia.codigo_combo_ensamblado">
               <span class="detail-label">Combo Incluido:</span>
-              <span class="detail-value">{{ tipoMembresia.codigo_combo_ensamblado }} (x{{ tipoMembresia.cantidad_combo_incluido }})</span>
+              <span class="detail-value">{{ tipoMembresia.codigo_combo_ensamblado }} (x{{
+                tipoMembresia.cantidad_combo_incluido }})</span>
             </div>
             <div class="card-detail-item" v-else>
               <span class="detail-label">Combo Incluido:</span>
@@ -81,31 +85,31 @@
           <div class="card-actions">
             <button class="btn-secondary" @click="editarTipoMembresia(tipoMembresia.id_tipo_membresia)" title="Editar">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="m18 2 4 4-4 4-4-4 4-4z"/>
-                <path d="M10.5 12.5 2 21l-1-1 8.5-8.5"/>
+                <path d="m18 2 4 4-4 4-4-4 4-4z" />
+                <path d="M10.5 12.5 2 21l-1-1 8.5-8.5" />
               </svg>
               Editar
             </button>
             <button class="btn-danger" @click="eliminarTipoMembresia(tipoMembresia.id_tipo_membresia)" title="Eliminar">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polyline points="3,6 5,6 21,6"/>
-                <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"/>
-                <line x1="10" y1="11" x2="10" y2="17"/>
-                <line x1="14" y1="11" x2="14" y2="17"/>
+                <polyline points="3,6 5,6 21,6" />
+                <path d="m19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
               </svg>
               Eliminar
             </button>
           </div>
         </div>
       </div>
-      
+
       <div v-else class="empty-state">
         <div class="empty-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
         </div>
         <h3>No hay tipos de membresía registrados</h3>
@@ -119,7 +123,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import ApiService from '../../Servicios/ApiService'
 
 export default {
   name: 'CrudMembresias',
@@ -142,15 +146,13 @@ export default {
     this.cargarTiposMembresia()
   },
   methods: {
-    cargarTiposMembresia() {
-      axios.get('https://app.factura-e.net/api/tipos-membresia')
-        .then(response => {
-          this.tiposMembresia = response.data
-        })
-        .catch(error => {
-          console.error('Error al cargar los tipos de membresía:', error)
-          alert('No se pudieron cargar los tipos de membresía. Intente de nuevo más tarde.')
-        })
+    async cargarTiposMembresia() {
+      try {
+        this.tiposMembresia = await ApiService.get('api/tipos-membresia')
+      } catch (error) {
+        console.error('Error al cargar los tipos de membresía:', error)
+        alert('No se pudieron cargar los tipos de membresía. Intente de nuevo más tarde.')
+      }
     },
     crearTipoMembresia() {
       this.$router.push('/CRUD_MembresiaForm')
@@ -160,14 +162,14 @@ export default {
     },
     eliminarTipoMembresia(id) {
       if (confirm('¿Estás seguro de ELIMINAR este tipo de membresía? (Su estado se cambiará a ELIMINADO)')) {
-        axios.delete(`https://app.factura-e.net/api/tipos-membresia/${id}`)
+        ApiService.delete(`api/tipos-membresia/${id}`)
           .then(() => {
             this.cargarTiposMembresia()
             alert('Tipo de membresía eliminado lógicamente (estado cambiado a ELIMINADO).')
           })
           .catch(error => {
             console.error('Error al eliminar tipo de membresía:', error)
-            alert('Error al eliminar el tipo de membresía: ' + (error.response && error.response.data && error.response.data.mensaje ? error.response.data.mensaje : error.message))
+            alert('Error al eliminar el tipo de membresía: ' + error.message)
           })
       }
     },
@@ -175,11 +177,11 @@ export default {
       if (!nombre) return 'N/A'
       const parts = nombre.split(' ').map(n => n[0]);
       if (parts.length > 1) {
-          return (parts[0] + parts[1]).substring(0, 2).toUpperCase();
+        return (parts[0] + parts[1]).substring(0, 2).toUpperCase();
       } else if (parts.length === 1 && parts[0].length > 0) {
-          return parts[0].substring(0, 2).toUpperCase();
+        return parts[0].substring(0, 2).toUpperCase();
       }
-      return nombre.substring(0,1).toUpperCase();
+      return nombre.substring(0, 1).toUpperCase();
     },
     formatValue(valor) {
       return parseFloat(valor || 0).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -297,13 +299,16 @@ export default {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  padding: 1.5rem; /* Añade un padding general al contenedor de tarjetas */
+  padding: 1.5rem;
+  /* Añade un padding general al contenedor de tarjetas */
 }
 
 .membership-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Columnas responsivas */
-  gap: 1.5rem; /* Espacio entre tarjetas */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  /* Columnas responsivas */
+  gap: 1.5rem;
+  /* Espacio entre tarjetas */
 }
 
 .membership-card {
@@ -328,11 +333,13 @@ export default {
   align-items: center;
   margin-bottom: 1rem;
   gap: 1rem;
-  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+  flex-wrap: wrap;
+  /* Permite que los elementos se envuelvan en pantallas pequeñas */
 }
 
 .card-title-group {
-  flex-grow: 1; /* Permite que el título ocupe el espacio restante */
+  flex-grow: 1;
+  /* Permite que el título ocupe el espacio restante */
 }
 
 .card-title {
@@ -348,10 +355,13 @@ export default {
   color: #4a5568;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
-  font-size: 0.8rem; /* Un poco más pequeño para el ID */
+  font-size: 0.8rem;
+  /* Un poco más pequeño para el ID */
   font-weight: 600;
-  margin-top: 0.25rem; /* Espacio debajo del título si se envuelve */
-  display: inline-block; /* Para que ocupe solo el espacio necesario */
+  margin-top: 0.25rem;
+  /* Espacio debajo del título si se envuelve */
+  display: inline-block;
+  /* Para que ocupe solo el espacio necesario */
 }
 
 /* member-avatar reutilizado */
@@ -366,7 +376,8 @@ export default {
   color: white;
   font-weight: 600;
   font-size: 1rem;
-  flex-shrink: 0; /* Evita que se encoja */
+  flex-shrink: 0;
+  /* Evita que se encoja */
 }
 
 /* status-badge reutilizado */
@@ -378,7 +389,8 @@ export default {
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
-  flex-shrink: 0; /* Evita que se encoja */
+  flex-shrink: 0;
+  /* Evita que se encoja */
 }
 
 .status-dot {
@@ -406,16 +418,22 @@ export default {
 }
 
 .card-body {
-  flex-grow: 1; /* Permite que el cuerpo ocupe el espacio disponible */
+  flex-grow: 1;
+  /* Permite que el cuerpo ocupe el espacio disponible */
   margin-bottom: 1.5rem;
-  border-top: 1px solid #edf2f7; /* Separador sutil */
+  border-top: 1px solid #edf2f7;
+  /* Separador sutil */
   padding-top: 1.5rem;
   display: grid;
-  grid-template-columns: 1fr; /* Una columna por defecto */
-  gap: 0.75rem; /* Espacio entre los ítems de detalle */
+  grid-template-columns: 1fr;
+  /* Una columna por defecto */
+  gap: 0.75rem;
+  /* Espacio entre los ítems de detalle */
 }
 
-@media (min-width: 500px) { /* Dos columnas para pantallas un poco más grandes */
+@media (min-width: 500px) {
+
+  /* Dos columnas para pantallas un poco más grandes */
   .card-body {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
@@ -448,20 +466,23 @@ export default {
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
-  display: inline-block; /* Para que el padding se aplique correctamente */
+  display: inline-block;
+  /* Para que el padding se aplique correctamente */
 }
 
 .group-tag-unico {
   background: linear-gradient(135deg, #b2f5ea 0%, #81e6d9 100%);
   color: #2d3748;
 }
+
 .group-tag-grupal {
   background: linear-gradient(135deg, #a7eaff 0%, #a0cbf5 100%);
   color: #2d3748;
 }
 
 .value-amount {
-  font-weight: 700; /* Más prominente */
+  font-weight: 700;
+  /* Más prominente */
   color: #22543d;
   font-size: 1.1rem;
 }
@@ -469,21 +490,27 @@ export default {
 .card-actions {
   display: flex;
   gap: 0.75rem;
-  justify-content: flex-end; /* Alinea los botones a la derecha */
-  border-top: 1px solid #edf2f7; /* Separador sutil */
+  justify-content: flex-end;
+  /* Alinea los botones a la derecha */
+  border-top: 1px solid #edf2f7;
+  /* Separador sutil */
   padding-top: 1.5rem;
-  margin-top: auto; /* Empuja los botones hacia abajo */
+  margin-top: auto;
+  /* Empuja los botones hacia abajo */
 }
 
-.btn-secondary, .btn-danger {
-  padding: 0.6rem 1.2rem; /* Ajusta el padding para los botones de la tarjeta */
+.btn-secondary,
+.btn-danger {
+  padding: 0.6rem 1.2rem;
+  /* Ajusta el padding para los botones de la tarjeta */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Espacio entre icono y texto */
+  gap: 0.5rem;
+  /* Espacio entre icono y texto */
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -549,25 +576,25 @@ export default {
   .container {
     padding: 1rem;
   }
-  
+
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .title {
     font-size: 2rem;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .card-header {
     flex-direction: column;
     align-items: flex-start;
@@ -575,16 +602,19 @@ export default {
   }
 
   .card-title-group {
-    width: 100%; /* Asegura que el título ocupe todo el ancho disponible */
+    width: 100%;
+    /* Asegura que el título ocupe todo el ancho disponible */
   }
 
   .status-badge {
-    width: fit-content; /* Se ajusta al contenido */
+    width: fit-content;
+    /* Se ajusta al contenido */
   }
 
   .card-actions {
     flex-direction: column;
-    align-items: stretch; /* Estira los botones para que ocupen todo el ancho */
+    align-items: stretch;
+    /* Estira los botones para que ocupen todo el ancho */
   }
 }
 </style>

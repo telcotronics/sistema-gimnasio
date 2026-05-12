@@ -24,7 +24,7 @@ import Cobros from '../components/Pagos/Form_regPagos.vue'
 import EditarUsuario from '../components/Usuarios/EditarUsuario'
 import CambiarPassword from '../components/Usuarios/CambiarPassword'
 import Pagos from '../components/Pagos/Pagos'
-import RegistrarVisita2 from '../components/Visitas/RegistrarVisita'
+//import RegistrarVisita2 from '../components/Visitas/RegistrarVisita'
 import RegistrarVisita from '../components/Visitas/RegistroVisitaMiembro.vue'
 import Visitas from '../components/Visitas/Visitas'
 import ConfiguracionComponent from '../components/Configuracion/ConfiguracionComponent'
@@ -39,6 +39,11 @@ import Ventas from '../components/Ventas/genera_venta.vue'
 
 import caja_cuadre from '../components/cajas/caja_cuadre.vue'
 import Inicio_dashboard from '../components/inicio_dashboard.vue'
+//import Inventario from '../components/inventario/inventario.vue'
+import Productos from '../components/Inventario/Crear_producto.vue'
+import ListaCXC from '../components/CXC/ListaCXC.vue'
+import ListaAbonos from '../components/Abonos/ListaAbonos.vue'
+
 
 Vue.use(Router)
 
@@ -176,11 +181,11 @@ export default new Router({
       name: 'RegistrarVisita',
       component: RegistrarVisita
     },
-    {
+   /* {
       path: '/registrar-visita2',
       name: 'RegistrarVisita2',
       component: RegistrarVisita2
-    },
+    },*/
     {
       path: '/visitas',
       name: 'Visitas',
@@ -226,6 +231,21 @@ export default new Router({
       path: '/venta',
       name: 'Venta y Cobros',
       component: Ventas
+    },
+    {
+      path: '/inventario',
+      name: 'Inventario',
+      component: Productos
+    },
+    {
+      path: '/cxc',
+      name: 'CXC',
+      component: ListaCXC
+    },
+    {
+      path: '/abonos',
+      name: 'Abonos',
+      component: ListaAbonos
     }
   ]
 })

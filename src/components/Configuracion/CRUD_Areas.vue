@@ -113,10 +113,7 @@
   </template>
   
   <script>
-  import axios from 'axios';
-  
-  // Define la URL base de la API externa usando una variable de entorno de Vue CLI
-  const API_BASE_URL = process.env.VUE_APP_URL_SERVIDOR_API || 'https://app.factura-e.net'; // Fallback
+  import ApiService from '../../Servicios/ApiService'
   
   export default {
     name: 'CRUD_Areas',
@@ -154,8 +151,7 @@
         this.loading = true;
         this.error = null;
         try {
-          const response = await axios.get(`${API_BASE_URL}/api/areas`);
-          this.areas = response.data;
+          this.areas = await ApiService.get('api/areas')
           this.filterAreas(); // Aplicar filtros después de cargar
         } catch (err) {
           console.error('Error al cargar áreas:', err);
@@ -247,11 +243,11 @@
         try {
           let response;
           if (this.isEditMode) {
-            response = await axios.put(`${API_BASE_URL}/api/areas/${this.currentArea.id_area}`, this.currentArea);
+            response = await ApiService.put(`api/areas/${this.currentArea.id_area}`, this.currentArea)
           } else {
-            response = await axios.post(`${API_BASE_URL}/api/areas`, this.currentArea);
+            response = await ApiService.post('api/areas', this.currentArea)
           }
-          this.formFeedbackMessage = response.data.mensaje || 'Operación exitosa.';
+          this.formFeedbackMessage = (response && response.mensaje) || 'Operación exitosa.'
           this.formFeedbackType = 'success';
           await this.fetchAreas(); // Recargar la lista
           setTimeout(() => {
@@ -276,12 +272,8 @@
       async confirmDelete(id, nombre) {
         if (confirm(`¿Estás seguro de INACTIVAR el área "${nombre}"? No se eliminará físicamente.`)) {
           try {
-            // Cambiar estado a 'INACTIVA'
-            const response = await axios.put(`${API_BASE_URL}/api/areas/${id}/inactivar`); // Nueva ruta para inactivar
-            // O si el PUT de actualizar ya maneja el estado:
-            // await axios.put(`${API_BASE_URL}/api/areas/${id}`, { estado_area: 'INACTIVA' });
-  
-            alert(response.data.mensaje || `Área "${nombre}" inactivada exitosamente.`);
+            const response = await ApiService.delete(`api/areas/${id}`)
+            alert((response && response.mensaje) || `Área "${nombre}" inactivada exitosamente.`)
             await this.fetchAreas(); // Recargar la lista
           } catch (error) {
             console.error('Error al inactivar área:', error);

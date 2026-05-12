@@ -144,7 +144,12 @@
 </template>
 
 <script>
-import HttpService from '../../Servicios/HttpService'
+// TAREA-02: Login migrado a API-SIGMA-CLOUD (2026-05-11).
+// Antes usaba HttpService → usuarios.php (PHP muerto).
+// Ahora usa ApiService.login() → POST /api/auth/login en el gateway multi-tenant.
+// La respuesta incluye el JWT y el db_tenant, que App.vue guarda en localStorage
+// para que ApiService los use automáticamente en cada request posterior.
+import ApiService from '../../Servicios/ApiService'
 
 export default {
   name: "Login",
@@ -172,51 +177,48 @@ export default {
   }),
 
   methods: {
-    async iniciarSesion() {
-      // Validar formulario
+    async iniciarSesion () {
       if (!this.$refs.form.validate()) return
 
       this.cargando = true
 
       try {
-        let payload = {
-          metodo: "login",
-          usuario: {
-            usuario: this.usuario,
-            password: this.password
-          }
-        }
+        // Auth via tabla `usuarios` del tenant (no webControl).
+        // Contraseña en MD5 — el servidor aplica MD5(), el cliente manda texto plano.
+        // Endpoint: POST /api/auth/login-socio (solo x-api-key, sin JWT ni ?db= en headers).
+        const resultado = await ApiService.login({
+          n_sesion: this.usuario,
+          clave:    this.password,
+          db:       process.env.VUE_APP_DB_TENANT || 'TELCOTRONICS'
+        })
 
-        const resultado = await HttpService.obtenerConDatos(payload, "usuarios.php")
-        
-        if (resultado) {
-          this.mostrarMensajeExito("¡Bienvenido! Iniciando sesión...")
-          setTimeout(() => {
-            this.$emit("logeado", resultado)
-          }, 1500)
-        } else {
-          this.mostrarMensajeError("Credenciales incorrectas")
-        }
+        // Subir la respuesta cruda a App.vue — él decide el flujo de sesión.
+        this.$emit('logeado', resultado)
+
       } catch (error) {
-        this.mostrarMensajeError("Error al conectar con el servidor")
+        // 401 = credenciales inválidas, cualquier otro = problema de red/servidor.
+        const msg = error.response?.status === 401
+          ? 'Credenciales incorrectas'
+          : 'Error al conectar con el servidor'
+        this.mostrarMensajeError(msg)
       } finally {
         this.cargando = false
       }
     },
 
-    mostrarMensajeExito(texto) {
+    mostrarMensajeExito (texto) {
       this.mostrarMensaje = true
       this.mensaje.texto = texto
       this.mensaje.color = "success"
     },
 
-    mostrarMensajeError(texto) {
+    mostrarMensajeError (texto) {
       this.mostrarMensaje = true
       this.mensaje.texto = texto
       this.mensaje.color = "error"
     }
   },
-};
+}
 </script>
 
 <style scoped>

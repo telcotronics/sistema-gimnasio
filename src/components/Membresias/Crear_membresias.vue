@@ -143,6 +143,8 @@
 </template>
 
 <script>
+import ApiService from '../../Servicios/ApiService'
+
 export default {
   data() {
     return {
@@ -160,30 +162,22 @@ export default {
   },
   methods: {
     guardarMembresia() {
-      // Aquí iría la lógica para guardar la membresía en la base de datos
-      // Por ejemplo, usando axios para hacer una petición POST a un endpoint de API
-      
       try {
-        // Simulación de guardado exitoso
-        console.log('Membresía a guardar:', this.membresia);
-        
-        // En un caso real, aquí realizaríamos la llamada a la API
-        // axios.post('/api/membrecias', this.membresia)
-        //   .then(response => {
-        //     this.mensajeExito = 'Membresía guardada exitosamente';
-        //     this.limpiarFormulario();
-        //   })
-        //   .catch(error => {
-        //     this.mensajeError = 'Error al guardar la membresía: ' + error.message;
-        //   });
-        
-        // Para efectos de demostración:
-        this.mensajeExito = 'Membresía guardada exitosamente';
-        setTimeout(() => {
-          this.mensajeExito = '';
-        }, 3000);
-        
-        this.limpiarFormulario();
+        ApiService.post('api/tipos-membresia', this.membresia)
+          .then(response => {
+            this.mensajeExito = 'Membresía guardada exitosamente';
+            this.limpiarFormulario();
+            setTimeout(() => {
+              this.mensajeExito = '';
+            }, 3000);
+          })
+          .catch(error => {
+            console.error('Error al guardar:', error);
+            this.mensajeError = 'Error al guardar la membresía: ' + (error.response && error.response.data && error.response.data.mensaje || error.message);
+            setTimeout(() => {
+              this.mensajeError = '';
+            }, 3000);
+          });
       } catch (error) {
         this.mensajeError = 'Error al guardar la membresía: ' + error.message;
         setTimeout(() => {

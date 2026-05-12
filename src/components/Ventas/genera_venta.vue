@@ -341,11 +341,7 @@
 </template>
 
 <script>
-const baseUrl = process.env.VUE_APP_API_URL || 'https://api-gateway-cloud.telcotronics.net/api/';
-const api_key = process.env.VUE_APP_API_KEY || 'ak_8f58d181cb8ad5042b677cf8a63ca708';
-const baseDat = process.env.VUE_APP_BASE_DAT || 'telcotronics';
-const gp_precio = process.env.VUE_APP_GP_PRECIO || 'PUBLICO';
-const usuario = JSON.parse(localStorage.getItem('usuario'));
+import ApiService from '../../Servicios/ApiService'
 
 
 export default {
@@ -464,43 +460,30 @@ export default {
     },
     async fetchActiveBoxes() {
       try {
-        const response = await fetch(`${baseUrl}panel/contabilidad/cajas_activas?db=${baseDat}`, {
-          headers: {
-            'x-api-key': api_key
-          }
-        });
-        const data = await response.json();
+        const data = await ApiService.get('api/cajas_activas')
         if (Array.isArray(data)) {
-          this.activeBoxes = data;
+          this.activeBoxes = data
           if (this.activeBoxes.length > 0 && this.assignedBox === 'POS #42') {
-            this.assignedBox = this.activeBoxes[0].contCaja_caja;
+            this.assignedBox = this.activeBoxes[0].contCaja_caja
           }
         }
       } catch (error) {
-        console.error('Error fetching active boxes:', error);
+        console.error('Error al obtener cajas activas:', error)
       }
     },
     async buscarCliente() {
-      if (!this.form.customer) return;
-      
+      if (!this.form.customer) return
       try {
-        const db = baseDat;
-        const response = await fetch(`${baseUrl}clientes/consulta_clientesApps?consulta=${encodeURIComponent(this.form.customer)}&db=${db}`, {
-          headers: {
-            'x-api-key': api_key
-          }
-        });
-        const data = await response.json();
-        
-        if (data && data.length > 0) {
-          this.searchResults = data;
-          this.showClientList = true;
+        const data = await ApiService.buscarClientes(this.form.customer)
+        if (data.length > 0) {
+          this.searchResults = data
+          this.showClientList = true
         } else {
-          alert('Cliente no encontrado');
-          this.searchResults = [];
+          alert('Cliente no encontrado')
+          this.searchResults = []
         }
       } catch (error) {
-        console.error('Error al buscar cliente:', error);
+        console.error('Error al buscar cliente:', error)
       }
     },
     selectClient(client) {
@@ -510,45 +493,26 @@ export default {
       this.searchResults = [];
     },
     async buscarArticulos() {
-      if (!this.itemSearch) return;
-      
+      if (!this.itemSearch) return
       try {
-        // Parámetros fijos solicitados: gp_precio=PUBLICO&db=telcotronics
-        //const db = 'telcotronics';
-        //const gp_precio = 'PUBLICO';
-        const query = encodeURIComponent(this.itemSearch);
-        
-        // Usamos la variable de entorno disponible (API_URL o SERV_API_DEV) o un fallback local
-        
-        console.log('baseUrl:', baseUrl)
-        const response = await fetch(`${baseUrl}items/get-items/${query}?gp_precio=${gp_precio}&db=${baseDat}`, {
-          headers: {
-            'x-api-key': api_key,
-            'accept': 'application/json'
-          }
-        });
-        const data = await response.json();
-        
-        // Ajustar según la estructura real de la respuesta de la API (asumiendo array o {data: []})
-        const items = Array.isArray(data) ? data : (data.data || []);
-        
+        const data = await ApiService.get(`api/productos?buscar=${encodeURIComponent(this.itemSearch)}`)
+        const items = Array.isArray(data) ? data : (data.data || [])
         if (items.length > 0) {
           this.searchResultsItems = items.map(i => ({
-            id: i.codigo_prdcto,
-            name: i.detalle_prdcto,
-            category: i.describe_prdcto || 'General',
-            price: Number(i.precio_vta),
-            // Si viene en base64 (empieza con /9j/), agregamos el prefijo data URI
-            image: i.url_img && !i.url_img.startsWith('http') ? `data:image/jpeg;base64,${i.url_img}` : (i.url_img || ''),
-            has_vat: true // Asumimos que los artículos de la tienda tienen IVA
-          }));
-          this.showItemList = true;
+            id: i.id || i.codigo,
+            name: i.nombre || i.detalle_prdcto,
+            category: i.categoria || 'General',
+            price: Number(i.precioVenta || i.precio_vta || 0),
+            image: i.imagen || '',
+            has_vat: true
+          }))
+          this.showItemList = true
         } else {
-          this.searchResultsItems = [];
-          this.showItemList = false;
+          this.searchResultsItems = []
+          this.showItemList = false
         }
       } catch (error) {
-        console.error('Error al buscar artículos:', error);
+        console.error('Error al buscar artículos:', error)
       }
     },
     selectItem(item) {
@@ -585,26 +549,17 @@ export default {
       this.loadingMemberships = true;
       this.showMembershipModal = true;
       try {
-        // Cargar todos los tipos de membresía si no están cargados
         if (this.availableMemberships.length === 0) {
-          const resTypes = await fetch(`${baseUrl}clientes/tipos-membresia?db=${baseDat}`, { headers: { 'x-api-key': api_key } });
-          this.availableMemberships = await resTypes.json();
+          this.availableMemberships = await ApiService.get('api/tipos-membresia')
         }
 
-        // Cargar las membresías específicas del cliente seleccionado
-        const resClient = await fetch(`${baseUrl}clientes/${this.selectedClient.client_id}/miembros?db=${baseDat}`, { headers: { 'x-api-key': api_key } });
-        
-        if (resClient.ok) {
-            const clientMemberships = await resClient.json();
-            // Si la respuesta es un array (incluso vacío), lo procesamos.
-            if (Array.isArray(clientMemberships)) {
-                this.clientMembershipIds = clientMemberships.map(m => m.id_tipo_membresia);
-            } else {
-                this.clientMembershipIds = [];
-            }
-        } else {
-            // Si la respuesta no es OK (ej. 404), asumimos que el cliente no tiene membresías.
-            this.clientMembershipIds = [];
+        try {
+          const clientMemberships = await ApiService.get(`api/clientes/${this.selectedClient.client_id}/miembros`)
+          this.clientMembershipIds = Array.isArray(clientMemberships)
+            ? clientMemberships.map(m => m.id_tipo_membresia)
+            : []
+        } catch {
+          this.clientMembershipIds = []
         }
 
       } catch (error) {

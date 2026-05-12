@@ -58,25 +58,42 @@
 
       <!-- Lista de navegación mejorada -->
       <v-list class="navigation-list" dense nav>
-        <v-list-item
-          v-for="(item) in items"
-          :key="item.title"
-          link
-          :to="item.link"
-          class="nav-item"
-          :class="{ 'nav-item-active': isActiveRoute(item.link) }"
-        >
-          <v-list-item-icon class="nav-icon">
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+        <template v-for="(group, i) in items">
+          <v-list-group
+            :key="i"
+            :value="false"
+            active-class="white--text"
+          >
+            <template v-slot:activator>
+              <v-list-item-icon class="nav-icon">
+                <v-icon>{{ group.icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="nav-title">{{ group.group }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
 
-          <v-list-item-content>
-            <v-list-item-title class="nav-title">{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+            <v-list-item
+              v-for="(item, j) in group.items"
+              :key="j"
+              link
+              :to="item.link"
+              class="nav-item"
+              :class="{ 'nav-item-active': isActiveRoute(item.link) }"
+            >
+              <v-list-item-icon class="nav-icon">
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-icon>
 
-          <!-- Indicador de ruta activa -->
-          <div class="active-indicator" v-if="isActiveRoute(item.link)"></div>
-        </v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="nav-title">{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+
+              <!-- Indicador de ruta activa -->
+              <div class="active-indicator" v-if="isActiveRoute(item.link)"></div>
+            </v-list-item>
+          </v-list-group>
+        </template>
       </v-list>
 
       <!-- Footer del drawer -->
@@ -102,30 +119,76 @@ export default {
     nombreGimnasio: "",
     logo: "",
     items: [
-      { title: "Inicio", icon: "mdi-view-dashboard", link: "/" },
-      { title: "Registrar visita", icon: "mdi-home-account", link: "/registrar-visita" },
-      { title: "Registrar Cobro", icon: "mdi-account-cash", link: "/registrar-cobro" },
-      { title: "Usuarios", icon: "mdi-account-box", link: "/usuarios" },
-      //{ title: "Miembros", icon: "mdi-weight-lifter", link: "/miembros" },
-      { title: "Membresías", icon: "mdi-wallet-membership", link: "/crud_membresias" },
-      //{ title: "Membresías old", icon: "mdi-wallet-membership", link: "/membresias" },
-      { title: "Membresías Tienda", icon: "mdi-wallet-membership", link: "/crud_membresia_card" },
-      { title: "Miembros Card", icon: "mdi-weight-lifter",link:"crud_miembros_card"},
-      { title: "Clientes", icon: "mdi-account-multiple", link: "/clientes" },
-      //{ title: "Pagos", icon: "mdi-account-cash", link: "/pagos" },
-      
-      //{ title: "Visitas", icon: "mdi-calendar-star", link: "/visitas" },
-      { title: "Chat Bot", icon: "mdi-chat", link: "/chat" },
-      { title: "Notificar Usuario", icon: "mdi-bell-ring", link: "/enviar_msg" },
-      { title: "Configurar", icon: "mdi-cog", link: "/configurar" },
-      { title: "Configurar Areas", icon: "mdi-cog", link: "/admin-areas" },
-      { title: "Mi perfil", icon: "mdi-account-key", link: "/perfil" },
-      /*cuadresn de caja*/
-      { title: "Estados", icon: "mdi-cash-register", link: "/estado_miembros" },
-      { title: "Cajas", icon: "mdi-cash-register", link: "/estado_cajas" },
-      { title: "Caja Apertura", icon: "mdi-cash-register", link: "/caja_apertura" },
-      { title: "Caja Cierre", icon: "mdi-cash-register", link: "/caja_cuadre"},
-      { title: "Venta ", icon: "mdi-cash-register", link: "/venta"},
+      {
+        group: "Dashboard",
+        icon: "mdi-view-dashboard",
+        items: [
+          { title: "Inicio", icon: "mdi-view-dashboard", link: "/" },
+        ],
+      },
+      {
+        group: "Operaciones",
+        icon: "mdi-clipboard-check",
+        items: [
+          { title: "Registrar Visita", icon: "mdi-home-account", link: "/registrar-visita" },
+          //{ title: "Registrar Visita2", icon: "mdi-home-account", link: "/registrar-visita2" },
+          { title: "Registrar Cobro", icon: "mdi-account-cash", link: "/registrar-cobro" },
+          { title: "Venta", icon: "mdi-cash-register", link: "/venta" },
+        ],
+      },
+      {
+        group: "Personas",
+        icon: "mdi-account-group",
+        items: [
+          { title: "Usuarios", icon: "mdi-account-box", link: "/usuarios" },
+          { title: "Clientes", icon: "mdi-account-multiple", link: "/clientes" },
+          { title: "Mi Perfil", icon: "mdi-account-key", link: "/perfil" },
+        ],
+      },
+      {
+        group: "Membresías",
+        icon: "mdi-wallet-membership",
+        items: [
+          { title: "Membresías", icon: "mdi-wallet-membership", link: "/crud_membresias" },
+          { title: "Membresías Tienda", icon: "mdi-wallet-membership", link: "/crud_membresia_card" },
+          { title: "Miembros Card", icon: "mdi-weight-lifter", link: "/crud_miembros_card" },
+        ],
+      },
+      {
+        group: "Inventario & CXC",
+        icon: "mdi-store",
+        items: [
+          { title: "Inventario", icon: "mdi-package-variant", link: "/inventario" },
+          { title: "Cuentas por Cobrar", icon: "mdi-account-clock", link: "/cxc" },
+          { title: "Abonos", icon: "mdi-cash-plus", link: "/abonos" },
+        ],
+      },
+      {
+        group: "Caja & Finanzas",
+        icon: "mdi-cash-register",
+        items: [
+          { title: "Estados", icon: "mdi-chart-bar", link: "/estado_miembros" },
+          { title: "Cajas", icon: "mdi-cash-register", link: "/estado_cajas" },
+          { title: "Caja Apertura", icon: "mdi-lock-open", link: "/caja_apertura" },
+          { title: "Caja Cierre", icon: "mdi-lock", link: "/caja_cuadre" },
+        ],
+      },
+      {
+        group: "Comunicación",
+        icon: "mdi-message-text",
+        items: [
+          { title: "Chat Bot", icon: "mdi-chat", link: "/chat" },
+          { title: "Notificar Usuario", icon: "mdi-bell-ring", link: "/enviar_msg" },
+        ],
+      },
+      {
+        group: "Configuración",
+        icon: "mdi-cog",
+        items: [
+          { title: "Configurar Sistema", icon: "mdi-cog", link: "/configurar" },
+          { title: "Configurar Áreas", icon: "mdi-domain", link: "/admin-areas" },
+        ],
+      },
     ],
   }),
 
