@@ -1,7 +1,4 @@
-//require("dotenv").config();
-
-//const RUTA_GLOBAL = process.env.URL_GLOBAL;
-const RUTA_GLOBAL = "https://api-gym.factura-e.net/api/";
+const RUTA_GLOBAL = process.env.VUE_APP_API_GYM || "https://api-gym.factura-e.net/api/";
 
 const HttpService = {
     async registrar(datos, ruta){

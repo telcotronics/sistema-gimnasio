@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+:root {
+  --color-bg:            #102210;
+  --color-surface:       #1c2e1c;
+  --color-surface-2:     #243324;
+  --color-border:        rgba(255, 255, 255, 0.08);
+
+  --color-primary:       #13ec13;
+  --color-primary-dim:   rgba(19, 236, 19, 0.15);
+
+  --color-text-primary:  #ffffff;
+  --color-text-secondary:#9ca3af;
+  --color-text-muted:    #6b7280;
+
+  --color-success:       #13ec13;
+  --color-warning:       #f59e0b;
+  --color-error:         #ef4444;
+  --color-info:          #3b82f6;
+
+  --font-family:         'Lexend', system-ui, sans-serif;
+
+  --radius-sm:  0.5rem;
+  --radius-md:  0.75rem;
+  --radius-lg:  1rem;
+  --radius-xl:  1.5rem;
+
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:   0 4px 12px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 20px rgba(19, 236, 19, 0.2);
+}
+
+html, body, #app {
+  background-color: var(--color-bg) !important;
+  font-family: var(--font-family);
+}
+
+/* Vuetify overrides para unificar el tema oscuro */
+.v-application {
+  background-color: var(--color-bg) !important;
+  font-family: var(--font-family) !important;
+}
+
+.v-card {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.v-data-table {
+  background-color: var(--color-surface) !important;
+}
+
+.v-navigation-drawer {
+  background-color: var(--color-surface) !important;
+}
+
+.v-app-bar {
+  background: linear-gradient(135deg, #102110 0%, #102210 100%) !important;
+}
+
+/* Clase utilitaria para tarjetas con estilo dark */
+.surface-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+/* Scrollbar personalizado para el tema oscuro */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-surface-2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a4f3a; }
