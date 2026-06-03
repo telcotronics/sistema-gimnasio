@@ -48,8 +48,8 @@ Permite el ingreso de usuarios con JWT, validando `logeado` y `db_tenant` en `lo
 Layout visual de estadísticas y gráficos SVG/barras, actualmente con datos estáticos.
 
 ### 3. Miembros
-**Estado: ⚠️ Funcional con issues**
-Gestión de socios, emisión de credenciales con código de barras/QR, semáforo de estado de acceso.
+**Estado: ✅ Operativo**
+Gestión de socios, emisión de credenciales con código de barras/QR, semáforo de estado de acceso. Conectado a la API-SIGMA-CLOUD a través de ApiService.
 
 ### 4. Membresías y Planes
 **Estado: ⚠️ Funcional con issues**
@@ -194,7 +194,7 @@ proyecto/
 |---|---|
 | Autenticación / Sesión | ❌ Roto / Login migrado pero pendiente confirmar |
 | Dashboard | 🚧 En desarrollo (datos estáticos) |
-| Miembros | ⚠️ Funcional con issues (duplicidad de componentes legacy/nuevos) |
+| Miembros | ✅ Operativo |
 | Membresías / Planes | ⚠️ Funcional (apunta a app.factura-e.net legacy) |
 | Usuarios del Sistema | ❌ Roto (HttpService → PHP muerto) |
 | Clientes | ⚠️ Funcional (apunta a app.factura-e.net legacy) |

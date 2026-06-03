@@ -240,7 +240,10 @@
         this.accessMessage = '';
         this.accessFeedbackType = '';
   
-        const areaName = this.areas.find(a => a.id_area === this.selectedAreaId)?.nombre_area || 'Área Desconocida';
+        // FIX COMPILACIÓN (2026-06-03): Se eliminó el encadenamiento opcional (?.)
+        // ya que el parser de babel-loader en este proyecto Webpack 3 legacy no lo soporta.
+        const foundArea = this.areas.find(a => a.id_area === this.selectedAreaId);
+        const areaName = foundArea ? foundArea.nombre_area : 'Área Desconocida';
   
         try {
           // En un escenario real, harías una llamada POST a tu API de backend

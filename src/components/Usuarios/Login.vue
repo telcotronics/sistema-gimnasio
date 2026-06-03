@@ -197,7 +197,9 @@ export default {
 
       } catch (error) {
         // 401 = credenciales inválidas, cualquier otro = problema de red/servidor.
-        const msg = error.response?.status === 401
+        // FIX COMPILACIÓN (2026-06-03): Se reemplazó el encadenamiento opcional (?.)
+        // por una evaluación estándar && compatible con el compilador Webpack 3.
+        const msg = error.response && error.response.status === 401
           ? 'Credenciales incorrectas'
           : 'Error al conectar con el servidor'
         this.mostrarMensajeError(msg)

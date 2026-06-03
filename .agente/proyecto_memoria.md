@@ -9,6 +9,8 @@
 
 | Fecha | Decisión | Razonamiento |
 |---|---|---|
+| 2026-06-03 | Migración de Miembros a `ApiService` | Se removieron las llamadas directas de `axios` y las URLs de factura-e.net heredadas en Crud_miembros.vue y crud_miembrosForm.vue, apuntándolas a `api/clientes/miembros` con soporte SaaS multi-tenant. |
+| 2026-06-03 | Corrección de errores de compilación Webpack 3 | Se modificó la importación de `vuetify/lib` a `vuetify` en Vuetify.js para cargar el bundle ES5 (eludiendo las exclusiones de babel-loader en node_modules). Se removió el optional chaining (?.) y se agregaron parámetros a los catch blocks en Login.vue, genera_venta.vue y MiembroAccessCard.vue para habilitar un build exitoso. |
 | 2026-06-03 | Migración de Plan de Proyecto a agentes | Se reestructura la documentación interna del proyecto al esquema de agentes del ecosistema Telcotronics (`agents.md`, `.agente/`) para mejorar la automatización y alineación. |
 | 2026-05-11 | Migración de `ApiService.js` a `API-SIGMA-CLOUD` | Sustituir el monolito legacy `app.factura-e.net` por el API Gateway centralizado multi-tenant. Se implementa soporte para header `x-api-key`, token Bearer JWT y parámetro query `?db=`. |
 | 2026-05-11 | Activación del Tema Oscuro en Vuetify | Se actualizó `plugins/Vuetify.js` con `dark: true` y se creó `src/assets/global.css` con design tokens unificados. Se unifica el color primario a `#13ec13`. |
@@ -20,13 +22,13 @@
 
 ## Estado actual
 
-El frontend se encuentra en desarrollo activo y operando parcialmente en producción. Actualmente, se está ejecutando la migración del stack HTTP. 17 componentes que originalmente llamaban a endpoints PHP a través de `HttpService.js` están siendo migrados a `ApiService.js` para consumir la `API-SIGMA-CLOUD`.
+El frontend se encuentra en desarrollo activo y operando parcialmente en producción. Se ha completado la migración del módulo de **Miembros** a `ApiService.js` y se han resuelto todas las incidencias críticas de compilación. Actualmente, restan **14 componentes** por migrar que dependen de `HttpService.js` hacia la nueva `API-SIGMA-CLOUD`.
 
 ---
 
 ## Pendientes
 
-- [ ] Migrar los 17 componentes restantes de `HttpService.js` (PHP muerto) a `ApiService.js` (API-SIGMA-CLOUD).
+- [ ] Migrar los 14 componentes restantes de `HttpService.js` (PHP muerto) a `ApiService.js` (API-SIGMA-CLOUD).
 - [ ] Confirmar formato exacto del endpoint `/api/auth/login` y completar la integración de Login/Sesión.
 - [ ] Implementar el guardado de ventas en `genera_venta.vue` (`handleSave` → `POST api/ventas`) y la impresión de tickets.
 - [ ] Completar el módulo de Inventario de Productos (conectar `guardarProducto` y crear componente de lista).

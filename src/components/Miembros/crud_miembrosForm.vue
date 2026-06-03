@@ -120,11 +120,10 @@
 </template>
 
 <script>
-import axios from 'axios';
-
-// Define the base URL of the external API using a Vue CLI environment variable
-// The variable name must start with VUE_APP_
-const API_BASE_URL = process.env.VUE_APP_URL_SERVIDOR_API || 'https://app.factura-e.net'; // Fallback for local development
+// MIGRACIÓN API-SIGMA-CLOUD (2026-06-03):
+// Se reemplazaron las llamadas directas de axios y las URLs quemadas de factura-e.net
+// por ApiService.js, consumiendo los nuevos endpoints del gateway multi-tenant.
+import ApiService from '../../Servicios/ApiService';
 
 export default {
   name: 'CRUD_MiembroForm',
@@ -198,9 +197,8 @@ export default {
       this.loading = true;
       this.feedbackMessage = '';
       try {
-        // GET operation for a single member is also from the external API
-        const response = await axios.get(`${API_BASE_URL}/api/miembros/${id}`);
-        const data = response.data;
+        // Operación GET para obtener detalles de un miembro por id_miembro
+        const data = await ApiService.get(`api/clientes/miembros/${id}`);
 
         // Format dates for 'date' type fields
         data.fecha_inicio = data.fecha_inicio ? new Date(data.fecha_inicio).toISOString().slice(0, 10) : '';
@@ -260,10 +258,10 @@ export default {
         if (this.clienteSearchText.length > 1) {
             const lowerCaseSearch = this.clienteSearchText.toLowerCase();
             try {
-                // Use the full URL of the external API for clients
-                const response = await axios.get(`${API_BASE_URL}/consulta_clientesApps?consulta=${encodeURIComponent(lowerCaseSearch)}`);
+                // Búsqueda de clientes a través del endpoint de consulta del gateway
+                const data = await ApiService.get('api/clientes/consulta_clientesApps', { consulta: lowerCaseSearch });
                 // Limit results to 10 to avoid overloading the frontend
-                this.clientesFiltered = response.data.slice(0, 10);
+                this.clientesFiltered = data.slice(0, 10);
             } catch (error) {
                 console.error('Error in client search request:', error.message);
                 // If there's an HTTP response error, you can see the status and data:
@@ -311,9 +309,9 @@ export default {
      */
     async fetchTiposMembresia() {
         try {
-            // Use the full URL of the external API for membership types
-            const response = await axios.get(`${API_BASE_URL}/api/tipos-membresia`);
-            this.tiposMembresia = response.data;
+            // Obtener tipos de membresía activos
+            const data = await ApiService.get('api/clientes/tipos-membresia');
+            this.tiposMembresia = data;
         } catch (error) {
             console.error('Error loading membership types:', error.message);
             if (error.response) {
@@ -523,19 +521,19 @@ export default {
 
 
       try {
-        let response;
-        // All member operations (GET, POST, PUT, DELETE) now point to the external API
+        let resData;
+        // Peticiones de creación o edición de miembros a través del gateway
         if (this.isEditMode) {
-          response = await axios.put(`${API_BASE_URL}/api/miembros/${this.miembro.id_miembro}`, memberDataToSend);
+          resData = await ApiService.put(`api/clientes/miembros/${this.miembro.id_miembro}`, memberDataToSend);
         } else {
-          response = await axios.post(`${API_BASE_URL}/api/miembros`, memberDataToSend);
+          resData = await ApiService.post('api/clientes/miembros', memberDataToSend);
         }
-        this.feedbackMessage = response.data.mensaje || 'Operación exitosa.';
+        this.feedbackMessage = resData.mensaje || 'Operación exitosa.';
         this.feedbackType = 'success';
 
         // If it was a creation, the backend will return the generated matricula
-        if (!this.isEditMode && response.data.matricula) {
-            console.log('Matrícula generada:', response.data.matricula);
+        if (!this.isEditMode && resData.matricula) {
+            console.log('Matrícula generada:', resData.matricula);
         }
 
         // Redirect to member list after a short delay

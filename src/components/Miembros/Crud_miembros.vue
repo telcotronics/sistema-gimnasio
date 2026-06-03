@@ -146,11 +146,10 @@
 </template>
 
 <script>
-import axios from 'axios';
-
-// Define la URL base de la API externa usando una variable de entorno de Vue CLI
-// El nombre de la variable debe empezar con VUE_APP_
-const API_BASE_URL = process.env.VUE_APP_URL_SERVIDOR_API || 'https://app.factura-e.net'; // Fallback para desarrollo local
+// MIGRACIÓN API-SIGMA-CLOUD (2026-06-03):
+// Se reemplazó el uso directo de axios y la URL hardcodeada de factura-e.net
+// por ApiService.js, apuntando a los nuevos endpoints multi-tenant del gateway.
+import ApiService from '../../Servicios/ApiService';
 
 export default {
     name: 'CrudMiembros',
@@ -195,17 +194,16 @@ export default {
     },
     methods: {
         /**
-         * @description Carga la lista de miembros desde la API externa.
+         * @description Carga la lista de miembros desde la API externa a través de ApiService.
          */
         cargarMiembros() {
-            console.log(`Cargando miembros desde: ${API_BASE_URL}/api/miembros`); // Log de depuración
-            axios.get(`${API_BASE_URL}/api/miembros`) // Usamos la URL base de la API externa
-                .then(response => {
-                    this.miembros = response.data;
+            console.log('Cargando miembros a través de ApiService desde api/clientes/miembros'); // Log de depuración
+            ApiService.get('api/clientes/miembros')
+                .then(data => {
+                    this.miembros = data;
                 })
                 .catch(error => {
                     console.error('Error al cargar miembros:', error);
-                    // Muestra el mensaje de error de la API si está disponible
                     const errorMessage = error.response && error.response.data && error.response.data.mensaje
                         ? error.response.data.mensaje
                         : 'No se pudieron cargar los miembros. Intente de nuevo más tarde.';
@@ -238,8 +236,8 @@ export default {
          */
         confirmarEliminarMiembro(id, nombre) {
             if (confirm(`¿Estás seguro de CANCELAR la membresía de ${nombre}? (Su estado se cambiará a CANCELADO)`)) {
-                console.log(`Eliminando miembro ${id} desde: ${API_BASE_URL}/api/miembros/${id}`); // Log de depuración
-                axios.delete(`${API_BASE_URL}/api/miembros/${id}`) // Apunta a la API externa
+                console.log(`Eliminando miembro ${id} a través de ApiService`); // Log de depuración
+                ApiService.delete(`api/clientes/miembros/${id}`)
                     .then(() => {
                         this.cargarMiembros(); // Recarga la lista después de la eliminación lógica
                         alert(`Membresía de ${nombre} cancelada exitosamente.`);

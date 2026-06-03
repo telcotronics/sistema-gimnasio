@@ -558,7 +558,9 @@ export default {
           this.clientMembershipIds = Array.isArray(clientMemberships)
             ? clientMemberships.map(m => m.id_tipo_membresia)
             : []
-        } catch {
+        } catch (error) {
+          // FIX COMPILACIÓN (2026-06-03): Se agregó (error) al catch ya que el parser
+          // de Webpack 3 heredado no soporta catch blocks sin parámetros (optional catch binding).
           this.clientMembershipIds = []
         }
 

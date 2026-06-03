@@ -1,5 +1,8 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+// FIX COMPILACIÓN (2026-06-03): Se cambió 'vuetify/lib' a 'vuetify'
+// para usar el bundle pre-compilado en ES5, ya que Webpack 3 excluye node_modules
+// del procesamiento de babel-loader y fallaba al parsear desestructuraciones ES6.
+import Vuetify from 'vuetify'
 
 Vue.use(Vuetify)
 
