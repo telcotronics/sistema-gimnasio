@@ -1,32 +1,49 @@
 # sistema-gimnasio
- Sistema para gimnasios. PHP, MySQL, Vue y Vuetify
-# '''Pasos basicos
- npm install para instalar las dependencias de package.json mysql 
 
- # VUE EM 10MIN
- https://www.youtube.com/watch?v=9AHMihFhrzw&ab_channel=TheCoderCaveesp
- 
+Panel web multi-tenant del ecosistema SIGMA para la administración integral de gimnasios (socios/staff).
 
+---
 
- rutas en router:index.js
+## Requisitos
 
-## Produccion 
-para compilar se usa el sigueinte comando
-´´´bash
-npm run build
-´´´
+- Node.js (versión >= 6.0.0)
+- npm (versión >= 3.0.0)
+- Servidor web (Apache 2.4 o Nginx) para desplegar el bundle compilado de producción.
 
-2. Componente Vue.js para Tarjeta de Acceso (MiembroAccessCard.vue)
-Este componente te permitirá visualizar una tarjeta de acceso para un miembro específico, generando un código de barras o un código QR a partir de su matrícula.
+## Instalación
 
-Para que este componente funcione, necesitarás instalar dos librerías en tu proyecto Vue.js:
+```bash
+# Instalar dependencias base del proyecto
+npm install
 
-jsbarcode: Para generar códigos de barras.
-
-qrcode.vue: Para generar códigos QR en Vue 2.
-
-Instala las dependencias ejecutando en tu terminal:
-
+# Instalar dependencias para generación de credenciales con código de barras y QR
 npm install jsbarcode qrcode.vue@1.7.0
-# o si usas yarn
-yarn add jsbarcode qrcode.vue@1.7.0
+```
+
+## Ejecución en local
+
+```bash
+# Iniciar servidor de desarrollo Webpack (disponible en http://localhost:8080)
+npm run dev
+```
+
+## Compilación para producción
+
+```bash
+# Compilar y minificar archivos para producción en la carpeta /dist
+npm run build
+```
+
+## Variables de entorno
+
+Debido a que el build utiliza Webpack 3, las variables de entorno no se cargan automáticamente desde un archivo `.env`. En su lugar, se configuran dentro de `config/dev.env.js` y `config/prod.env.js`.
+
+| Variable | Descripción | Default / Ejemplo |
+|---|---|---|
+| `VUE_APP_API_SIGMA` | URL base del API Gateway de SIGMA-CLOUD | `"https://api-gateway-cloud.telcotronics.net"` |
+| `VUE_APP_API_KEY` | API Key del tenant asignada en SIGMA-WEBCONTROL | `"ak_8f58d181cb8ad5042b677cf8a63ca708"` |
+| `VUE_APP_DB_TENANT` | Nombre de la base de datos MySQL/MariaDB del tenant | `"TELCOTRONICS"` |
+
+## Licencia
+
+Este proyecto está bajo la licencia Creative Commons Reconocimiento-CompartirIgual 3.0 (CC BY-SA 3.0).
