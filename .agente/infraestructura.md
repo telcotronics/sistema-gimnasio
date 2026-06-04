@@ -142,7 +142,7 @@ Cronología de los servidores principales:
 | **WebControlSigma** | `https://git.telcotronics.net/pablinux/Web_siax-sytem.git` | PHP 8.x + MySQL / MariaDB + Rivescript | pablinux | ✅ Activo | Panel web de control administrativo e interfaz visual para control de licencias, usuarios, captcha y gestión de API Keys en el ecosistema Telcotronics. |
 | **sigmac_app** | `https://git.telcotronics.net/pablinux/sigmac_app.git` | Flutter 2.11 / Dart 2.17-beta | pablinux | 🟡 En desarrollo activo | App CRM companion multiplataforma (Android + Linux desktop). Cliente nativo offline-first para gestión de ventas, inventario, clientes, pedidos y proformas. Se sincroniza con API-SIGMA-CLOUD y se autentica vía API-SIGMA-WEBCONTROL. |
 | **sigmac-web** | `https://git.telcotronics.net/pablinux/SIGMAC-WEB_PHP.git` | Laravel 13 (PHP 8.5) + Vue 3 + Tailwind | pablinux | 🟡 En desarrollo activo | Versión web del CRM companion. SPA Vue 3 + API REST Laravel. Réplica de sigmac_app para el navegador. URL: `crm.sigmac.app`. Desplegado en Servidor-web (.109). |
-| **SitioWeb_telcotronics** | [pendiente — crear repo en git.telcotronics.net] | HTML5/CSS3/JS vanilla + PHP 8.5 + PHPMailer | pablinux | ✅ v2.3.0 | Sitio web institucional y tienda en línea de Telcotronics. Desplegado en Apache .109 `/var/www/web_telcotronics/`. Dominio: `telcotronics.com`. |
+| **SitioWeb_telcotronics** | [pendiente — crear repo en git.telcotronics.net] | HTML5/CSS3/JS vanilla + PHP 8.5 + PHPMailer | pablinux | ✅ v2.3.1 | Sitio web institucional y tienda en línea de Telcotronics. 914 productos reales vía API-SIGMA-CLOUD. Apache .109 `/var/www/web_telcotronics/public_html/`. Dominio: `telcotronics.com`. |
 | **app_ideas** | `https://git.telcotronics.net/pablinux/APPA-GENERQADOR-DE-IDEAS.git` | Node.js (Express) + MongoDB + EJS | pablinux | 🟡 En desarrollo activo | Canvas de ideas y pensamiento visual. Genera, organiza y visualiza ideas con soporte de IA. Incluye panel de dibujo, flujo, recopilación de procesos e integración con AIT (IA Telcotronics). Puerto 2000. BD: MongoDB `app_ideas` en CT 102 (.146). |
 | **app_marketing** | [pendiente — crear repo en git.telcotronics.net] | Node.js (Express) + MongoDB + EJS | pablinux | 🟡 En desarrollo activo | Centro de publicidad y marketing del ecosistema. Gestiona campañas para las apps internas, las sirve vía API REST y widget JS embebible. Trackea impresiones y clics por campaña y por app origen. Puerto 2100. BD: MongoDB `app_marketing` en CT 102 (.146). |
 | **app_fidelizacion** | [pendiente — crear repo en git.telcotronics.net] | Node.js (Express) + MySQL + EJS | pablinux | 🟡 En desarrollo activo | Plataforma de lealtad, escáner QR y canjes. Gestión de clientes y transacciones de partners. Puerto 2001. BD: MySQL `nexo_fd` en 192.168.10.149. |
@@ -828,21 +828,40 @@ Panel web central de administración del ecosistema Telcotronics. Gestiona empre
 |--------|------|--------|
 | Login + captcha | `index.php` + `login.php` | ✅ Operativo (bcrypt + PHP 8.5) — rediseño pendiente |
 | Panel principal + Dashboard métricas | `PanelMenu.php` | ✅ Operativo — inicio con 7 stat cards + 2 tablas de detalle |
-| Hub Clientes (empresas / sesiones cloud / xValidar) | `app/clientes/sesiones.php` | ✅ Operativo 2026-06-03 |
-| API Keys (webControl + sigma-robot + api-IA) | `app/clientes/apikeys.php` | ✅ Operativo — modal por tab |
-| Licencias de hosts (SHA256) | `app/clientes/licencias.php` | ✅ Operativo 2026-06-03 |
+| Hub Clientes (4 tabs: empresas / equipos / sesiones cloud / xValidar) | `app/clientes/sesiones.php` | ✅ Operativo 2026-06-03 |
+| API Keys (webControl + sigma-robot + api-IA) | `app/clientes/apikeys.php` | ✅ Operativo — ver/copiar key_value, badge vencida, extender expiración |
+| Equipos / Licencias hosts SHA256 | `sesiones.php?tab=equipos` | ✅ Operativo — `licencias.php` redirige aquí |
 | Notificaciones por cliente | `app/clientes/notificaciones.php` | ✅ Operativo |
 | Panel Facturación SRI (BFF) | `app/facturacion/` | ✅ Operativo |
 | Usuarios del panel | `app/usuarios/` | ✅ Operativo |
-| Catálogo apps descargables | `app/sigma/` | ✅ Operativo |
+| Hub Software (7 tabs + Cloud + Reportes CRUD) | `app/software/` | ✅ Operativo — reemplaza `app/sigma/` |
+| Webhook sync apps | `POST /api/sync_app.php` | ✅ Operativo — `x-api-key`, INSERT/UPDATE `aplicaciones` |
+| Endpoint reportes SIGMAC Java | `GET /api/reportes.php` | ✅ Operativo — catálogo JSON + descarga por `?id=N` |
 | Webhooks / chatbot | `webhooks/domus/` | ⚠️ Legacy |
 
 **Algoritmo de licencias:** `hash('sha256', strtoupper($hostname).'|'.strtoupper($empresa).'|'.SIGMA_LIC_SALT)` — resultado (64 hex) en `HostEmpresa.HostEmp_idLic`. Determinista: mismo host+empresa = mismo código siempre.
+
+**BDs de software (en `webControl` — `.149`):**
+
+| Tabla | Uso | Campo clave |
+|-------|-----|-------------|
+| `aplicaciones` | Catálogo general de apps descargables (Linux/Windows/Mac/BD/Herramientas) | `app_ENLACE` — URL de descarga |
+| `aplicaciones_reportes` | Plantillas de reportes por categoría (ventas, inventario, caja, CxC, CxP, compras, contabilidad) | `url_plantilla` — consumida por `GET /api/reportes.php?id=N` |
+| `aplicaciones_img` | Iconos y miniaturas para `aplicaciones` y `aplicaciones_reportes` | `ref_tabla` + `ref_id` — FK polimórfica |
+
+**Endpoint de reportes para SIGMAC Java:**
+```
+GET https://siax-system.net/api/reportes.php          → catálogo JSON completo
+GET https://siax-system.net/api/reportes.php?id=N     → descarga directa o redirect
+GET https://siax-system.net/api/reportes.php?categoria=ventas → filtrado JSON
+→ Sin autenticación — acceso público por URL
+```
 
 **Integración con el ecosistema:**
 - Provee `webControl.api_key` — consumida por `API-SIGMA-CLOUD` y `API-SIGMA-WEBCONTROL` para validar `x-api-key`
 - Gestiona `usuarios_sesion` y su vínculo con `ClienteEmpresa` (FK bidireccional `usrSesion_idEmp` ↔ `clientEmp_idUsuario`)
 - Las apps Flutter/PHP/Java registran usuarios vía `API-SIGMA-WEBCONTROL` → `usuarios_xValidar` → OTP → `usuarios_sesion` — visibles y gestionables desde este panel
+- **SIGMAC Java** consumirá `GET /api/reportes/{id}` para descargar plantillas de reportes directamente desde el panel
 
 **Más información:** `siax-amd:/home/pablinux/Projects/php/Web_siax-sytem/agents.md`
 
@@ -850,14 +869,14 @@ Panel web central de administración del ecosistema Telcotronics. Gestiona empre
 
 ### SitioWeb_telcotronics — Sitio web institucional y tienda en línea
 
-Sitio web público de Telcotronics. SPA estática servida por Apache en Servidor-web (.109). Presenta los servicios, portafolio e historia de la empresa, genera leads vía formulario de contacto PHP+PHPMailer y expone una tienda en línea. No tiene BD propia ni expone APIs internas — consume únicamente el SMTP del ecosistema para notificaciones de formulario.
+Sitio web público de Telcotronics. SPA estática servida por Apache en Servidor-web (.109). Presenta los servicios, portafolio e historia de la empresa, genera leads vía formulario de contacto PHP+PHPMailer y expone una tienda en línea con **914 productos reales** del catálogo del ERP. Consume SMTP del ecosistema y API-SIGMA-CLOUD para el catálogo.
 
 | Parámetro | Valor |
 |-----------|-------|
 | Repositorio Git | [pendiente — crear repo en git.telcotronics.net] |
 | Tecnología principal | HTML5 / CSS3 / JS ES6+ vanilla · Tailwind CSS (CDN) · PHP 8.5 + PHPMailer |
 | Responsable | pablinux |
-| Estado actual | ✅ v2.3.0 |
+| Estado actual | ✅ v2.3.1 |
 | Código local | `pablinux-laptop` (`192.168.10.72`) — `/home/pablinux/Projects/php/SitioWeb_telcotronics` |
 | Servidor de producción | Servidor-web CT 150 (`192.168.10.109`) — Apache 2.4.66 + PHP 8.5-FPM |
 | Directorio deploy | `/var/www/web_telcotronics/public_html/` |
@@ -865,26 +884,54 @@ Sitio web público de Telcotronics. SPA estática servida por Apache en Servidor
 | Puerto | 80 / 443 (Apache) |
 | Última actualización | 2026-06-03 |
 
-**BDs que usa:** Ninguna — sitio completamente estático.
+**BDs que usa:** Ninguna propia — consume `TELCOTRONICS` en MySQL `.116` a través de API-SIGMA-CLOUD (nunca conexión directa).
 
 **Servicios que consume:**
 
-| Servicio | URL | Autenticación | Propósito |
-|---------|-----|---------------|-----------|
-| SMTP ecosistema | `smtp.sigmac.app:587` (interno: `192.168.10.111:587`) | `no-reply@sigmac.app` / `Sigma.2030@` | Formulario de contacto — envío de lead + confirmación al remitente vía PHPMailer |
+| Servicio | URL / Host | Autenticación | Propósito |
+|---------|-----------|---------------|-----------|
+| SMTP ecosistema | `smtp.sigmac.app:587` (interno: `192.168.10.111:587`) | `no-reply@sigmac.app` / `Sigma.2030@` | Formulario de contacto — lead al equipo + confirmación al remitente |
+| API-SIGMA-CLOUD | `https://api-gateway-cloud.telcotronics.net` | `x-api-key: <sigma_api_key>` | Catálogo tienda — grupo de precios `VENTAS_WEB`, BD `TELCOTRONICS` |
+
+**Configuración de API-SIGMA-CLOUD en el servidor** (`api/config.php`, nunca en git):
+
+```php
+'sigma_api_key' => '706847ea7fbe9caf9c5d4d26b41391a3cfe5eec8bd4404cc4e7f857d2e950acf',
+'sigma_db'      => 'TELCOTRONICS',
+```
+
+- `sigma_api_key` — se valida contra `webControl.api_key` en MariaDB `.149`. Gestionar desde **WebControlSigma** (`siax-system.net` → panel "API Keys").
+- `sigma_db` — base de datos del catálogo en MySQL `.116`. No cambiar salvo migración de BD.
+
+**Cómo verificar que la key funciona:**
+```bash
+curl -s "https://api-gateway-cloud.telcotronics.net/api/items/listar_grupo_precio?db=TELCOTRONICS" \
+  -H "x-api-key: 706847ea7fbe9caf9c5d4d26b41391a3cfe5eec8bd4404cc4e7f857d2e950acf"
+# Respuesta esperada: [...,{"nombre":"VENTAS_WEB",...}]
+```
+
+**Cómo renovar la key:** WebControlSigma → "API Keys" → nueva key → editar `api/config.php` en servidor → `rm /tmp/telco_catalogo_*.json`.
+
+**Forzar recarga del catálogo** (sin cambiar la key, refleja productos nuevos del ERP):
+```bash
+ssh pablinux@192.168.10.109 "rm /tmp/telco_catalogo_*.json"
+```
+
+**Agregar productos a la tienda:** desde SIGMAC → Inventario → Producto → Precios → añadir grupo `VENTAS_WEB`.
 
 **Módulos disponibles:**
 
 | Módulo | Archivo | Estado |
 |--------|---------|--------|
 | Sitio institucional (SPA) | `index.html` | ✅ v2.1.0 — completo |
-| Tienda en línea | `tienda.html` | ✅ v1.0 — 24 productos, 6 categorías, cart drawer, PiP video |
-| Formulario de contacto | `api/contacto.php` | ✅ Implementado — pendiente activar credenciales SMTP en servidor |
+| Tienda en línea | `tienda.html` | ✅ v2.0 — 914 productos reales, categorías dinámicas, búsqueda, filtros |
+| Catálogo proxy | `api/productos.php` | ✅ → API-SIGMA-CLOUD `VENTAS_WEB`, caché 1h en `/tmp` |
+| Formulario de contacto | `api/contacto.php` | ✅ PHP + PHPMailer + honeypot — pendiente activar SMTP en servidor |
 
 **Integración con el ecosistema:**
-- No expone APIs ni es consumido por otros proyectos internos
-- Consume SMTP del ecosistema (`smtp.sigmac.app`) para el formulario de contacto
-- Chatbot Dialogflow embebido (agent ID `eea5ca65-ded3-4c89-bd8a-9e6378cb4686`) — independiente del hosting
+- Consume **API-SIGMA-CLOUD** para catálogo de productos (grupo `VENTAS_WEB`, BD `TELCOTRONICS`)
+- Consume **SMTP ecosistema** (`smtp.sigmac.app`) para formulario de contacto
+- Chatbot **Dialogflow** embebido (agent ID `eea5ca65-ded3-4c89-bd8a-9e6378cb4686`) — independiente del hosting
 
 **Más información:** `pablinux-laptop:/home/pablinux/Projects/php/SitioWeb_telcotronics/agents.md`
 
@@ -996,7 +1043,7 @@ Panel web de administración de gimnasios en el ecosistema SIGMA (destinado a lo
 | Directorio deploy | `/var/www/web_gimnasio/public_html/` |
 | Dominio público | `[pendiente]` |
 | Puerto | — |
-| Última actualización | 2026-06-03 |
+| Última actualización | 2026-05-31 |
 
 **BDs que usa:**
 
@@ -1013,9 +1060,9 @@ Panel web de administración de gimnasios en el ecosistema SIGMA (destinado a lo
 
 | Módulo | Ruta | Estado |
 |--------|------|--------|
-| Autenticación / Sesión | `/login` | ❌ Roto / Login via API-SIGMA-CLOUD (TAREA-02) completado pero pendiente confirmar formato exacto del endpoint `/api/auth/login` |
+| Autenticación / Sesión | `/login` | ✅ Operativo (Login migrado a API-SIGMA-CLOUD) |
 | Dashboard | `/` | 🚧 Lógica incompleta (datos hardcodeados) |
-| Miembros | `/crud_miembros_card` | ⚠️ Funcional con issues (duplicidad de componentes legacy) |
+| Miembros | `/crud_miembros_card` | ✅ Operativo (Migrado a ApiService y API-SIGMA-CLOUD) |
 | Membresías / Planes | `/crud_membresia_card` | ⚠️ Funcional (migrado a ApiService, apunta a app.factura-e.net legacy) |
 | Usuarios | `/usuarios` | ❌ Roto (usa HttpService → PHP muerto) |
 | Clientes | `/clientes` | ⚠️ Funcional (apunta a app.factura-e.net legacy) |

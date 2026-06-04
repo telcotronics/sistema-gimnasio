@@ -9,6 +9,7 @@
 
 | Fecha | Decisión | Razonamiento |
 |---|---|---|
+| 2026-06-03 | Adopción de la Directriz Central del Ecosistema | Se definen los 4 frentes de desarrollo del ecosistema SIGMA (Web Pública, Web Admin - Control, Panel Admin - Socios, Web App - Clientes), estableciendo formalmente a `sistema-gimnasio` en el frente 3 (Panel Admin - Socios). |
 | 2026-06-03 | Migración de Miembros a `ApiService` | Se removieron las llamadas directas de `axios` y las URLs de factura-e.net heredadas en Crud_miembros.vue y crud_miembrosForm.vue, apuntándolas a `api/clientes/miembros` con soporte SaaS multi-tenant. |
 | 2026-06-03 | Corrección de errores de compilación Webpack 3 | Se modificó la importación de `vuetify/lib` a `vuetify` en Vuetify.js para cargar el bundle ES5 (eludiendo las exclusiones de babel-loader en node_modules). Se removió el optional chaining (?.) y se agregaron parámetros a los catch blocks en Login.vue, genera_venta.vue y MiembroAccessCard.vue para habilitar un build exitoso. |
 | 2026-06-03 | Migración de Plan de Proyecto a agentes | Se reestructura la documentación interna del proyecto al esquema de agentes del ecosistema Telcotronics (`agents.md`, `.agente/`) para mejorar la automatización y alineación. |

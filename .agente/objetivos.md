@@ -7,6 +7,17 @@
 
 ---
 
+## Directriz Central del Ecosistema
+
+El objetivo de desarrollo queda formalmente establecido bajo la siguiente distribución de frentes del ecosistema:
+
+1. **🌐 Web Pública:** Destinada al público general para captación, información del SaaS y marketing.
+2. **🛡️ Web Admin (`web_admin` => Control):** Panel de control, auditoría, monitoreo multi-tenant y administración del sistema central.
+3. **🤝 Panel Admin (`panel_admin` => Socios):** Gestión operativa para los comercios afiliados y partners (este proyecto: **`sistema-gimnasio`** para dueños y staff de gimnasios).
+4. **📱 Web App (`web_app` => Clientes):** Aplicación interactiva dedicada a los clientes finales y socios del gimnasio (para autogestión, reservas, visualización de accesos, etc.).
+
+---
+
 ## Pendientes
 
 | # | Objetivo | Origen | Prioridad |
